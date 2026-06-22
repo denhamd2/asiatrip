@@ -29,8 +29,9 @@ This app is configured for [Railway](https://railway.app) via [`railway.toml`](r
 1. Push this repo to GitHub (`main` branch).
 2. In [Railway](https://railway.app), click **New Project** → **Deploy from GitHub repo**.
 3. Select **`denhamd2/asiatrip`** (creates a **new** project — does not affect your other Railway apps).
-4. Open the service → **Settings → Networking** → **Generate Domain** for a public URL (e.g. `asiatrip-production.up.railway.app`).
-5. Confirm **Settings → Source** uses branch `main` with deploy-on-push enabled.
+4. Wait for the deploy to finish (green **Active** status).
+5. Open the **asiatrip** service → **Settings** → **Networking** → **Generate Domain** (fixes **Unexposed service** — without this there is no public URL).
+6. Confirm **Settings → Source** uses branch `main` with deploy-on-push enabled.
 
 No environment variables are required; Railway sets `PORT` automatically.
 
