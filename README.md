@@ -35,6 +35,10 @@ This app is configured for [Railway](https://railway.app) via [`railway.toml`](r
 
 No environment variables are required; Railway sets `PORT` automatically.
 
+Railpack detects this Vite app and serves the `dist/` folder via its built-in static server (Caddy). Do **not** set a custom start command — that disables SPA mode and can leave the service offline.
+
+Optional: `RAILPACK_NODE_VERSION=22` if the build log shows an older Node version (Vite 8 needs Node 20.19+).
+
 ### After setup
 
 Every push to `main` triggers an automatic redeploy.
