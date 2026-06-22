@@ -4,7 +4,7 @@ import {
   CURATED_VENUE_SOURCES,
 } from '../data/curatedImages'
 import type { PlaceImageResult, PlaceImageSource } from '../types/placeImage'
-import { extractVenue, getLocationMeta } from './locations'
+import { extractVenue, formatLocationPin, getLocationMeta } from './locations'
 import { fetchPexelsImageUrl } from './pexelsImages'
 import { fetchTripAdvisorImageUrl } from './tripadvisorImages'
 
@@ -25,7 +25,7 @@ const NEGATIVE_CACHE_TTL_MS = 5 * 60 * 1000
 const QUEUE_CONCURRENCY = 2
 const QUEUE_GAP_MS = 250
 /** Bump when cache URL format changes (e.g. thumbnail vs originalimage preference). */
-const CACHE_KEY_VERSION = 'v5'
+const CACHE_KEY_VERSION = 'v6'
 const HOTEL_IMAGE_WIDTH_PX = 330
 
 const AIRPORT_NAMES: Record<string, string> = {
@@ -59,21 +59,70 @@ const HOTEL_LANDMARK_FALLBACKS: Record<string, string> = {
   'the berkeley hotel pratunam': 'Pratunam',
 }
 
+/** Sub-city hints for venues whose name alone matches the wrong place worldwide. */
+const VENUE_LOCATION_HINTS: Record<string, string> = {
+  'bubble forest cafe': 'Pathum Wan, Bangkok',
+  "coco tam's": 'Bophut, Koh Samui',
+  "fisherman's village": 'Bophut, Koh Samui',
+  'han market': 'Hai Chau, Da Nang',
+  'overlap stone': 'Lamai, Koh Samui',
+  'the jungle club': 'Chaweng, Koh Samui',
+  'train street': 'Hoan Kiem, Hanoi',
+}
+
+/** Venue names unique enough to search without location qualifiers. */
+const UNIQUE_VENUE_NAMES = new Set([
+  'artscience museum',
+  'gardens by the bay',
+  'golden bridge',
+  'grand palace',
+  'harry potter: visions of magic',
+  'iconsiam',
+  'jewel changi airport',
+  'marina bay sands',
+  'resorts world sentosa',
+  'teamLab future world',
+  'universal studios singapore',
+  'wat pho',
+  'wat phra kaew',
+])
+
+const GENERIC_VENUE_PATTERNS = [
+  /\bvillage\b/i,
+  /\bmarket\b/i,
+  /\btemple\b/i,
+  /\bbeach\b/i,
+  /\bquarter\b/i,
+  /\btrain street\b/i,
+  /\bfood centre\b/i,
+  /\bfood center\b/i,
+  /\bpagoda\b/i,
+  /\bharbour\b/i,
+  /\bharbor\b/i,
+  /\bclub\b/i,
+  /\bstone\b/i,
+  /\bcafe\b/i,
+  /\bcafé\b/i,
+  /\btour\b/i,
+  /\bhome\b/i,
+]
+
+interface ImageSearchContext {
+  venue: string
+  venueKey: string
+  location: string
+  locationTokens: string[]
+  genericVenue: boolean
+}
+
 /** Venues with no (or misleading) Wikipedia opensearch results — use a known article title. */
 const VENUE_WIKIPEDIA_TITLES: Record<string, string> = {
-  'bubble forest cafe': 'CentralWorld',
   'cam thanh basket boat': 'Hoi An Ancient Town',
-  "coco tam's": 'Ko Samui',
-  'han market': 'Da Nang',
   'harry potter: visions of magic': 'Resorts World Sentosa',
   'lady buddha': 'Son Tra Mountain',
   'linh ung pagoda': 'Son Tra Mountain',
-  'my khe beach': 'Da Nang',
-  'overlap stone': 'Ko Samui',
   'palawan beach': 'Sentosa',
-  'pig island tour': 'Ko Samui',
   'raffles long bar': 'Raffles Hotel Singapore',
-  'samui elephant home': 'Ko Samui',
   'satay by the bay': 'Gardens by the Bay',
   'solar castle': 'Da Nang',
   'thang long water puppet theatre': 'Water puppetry',
@@ -201,26 +250,92 @@ class RequestQueue {
 const requestQueue = new RequestQueue()
 
 export function buildPlaceSearchQuery(venue: string, location: string): string {
-  const meta = getLocationMeta(location)
-  if (meta.city && meta.city !== 'In transit') {
-    return `${venue} ${meta.city}`
-  }
-  return venue
+  return buildPlaceSearchQueries(venue, location)[0] ?? formatLocationPin(venue, location)
 }
 
-function buildPlaceSearchQueries(venue: string, location: string): string[] {
+export function buildPlaceSearchQueries(venue: string, location: string): string[] {
+  const venueKey = venue.trim().toLowerCase()
   const meta = getLocationMeta(location)
-  const queries = new Set<string>()
+  const hint = VENUE_LOCATION_HINTS[venueKey]
+  const ordered: string[] = []
 
-  queries.add(venue)
+  const push = (query: string) => {
+    const trimmed = query.trim()
+    if (trimmed) ordered.push(trimmed)
+  }
+
+  if (hint && meta.country) {
+    push(`${venue}, ${hint}, ${meta.country}`)
+  }
+  if (hint) {
+    push(`${venue}, ${hint}`)
+    push(`${venue} ${hint}`)
+  }
+
+  push(formatLocationPin(venue, location))
+
   if (meta.city && meta.city !== 'In transit') {
-    queries.add(`${venue} ${meta.city}`)
+    push(`${venue} ${meta.city}`)
   }
   if (meta.country) {
-    queries.add(`${venue} ${meta.country}`)
+    push(`${venue} ${meta.country}`)
   }
 
-  return [...queries]
+  if (!isGenericVenueName(venue)) {
+    push(venue)
+  }
+
+  return [...new Set(ordered)]
+}
+
+function isGenericVenueName(venue: string): boolean {
+  const key = venue.trim().toLowerCase()
+  if (UNIQUE_VENUE_NAMES.has(key)) return false
+  return GENERIC_VENUE_PATTERNS.some((pattern) => pattern.test(venue))
+}
+
+function getLocationTokens(location: string, venueKey: string): string[] {
+  const meta = getLocationMeta(location)
+  const hint = VENUE_LOCATION_HINTS[venueKey] ?? ''
+  const combined = [hint, meta.city, meta.country].filter(Boolean).join(' ')
+  const tokens = new Set(searchWords(combined))
+
+  const lower = combined.toLowerCase()
+  if (lower.includes('samui')) tokens.add('samui')
+  if (lower.includes('bophut') || lower.includes('bo phut')) {
+    tokens.add('bophut')
+    tokens.add('phut')
+  }
+  if (lower.includes('lamai')) tokens.add('lamai')
+  if (lower.includes('chaweng')) tokens.add('chaweng')
+  if (lower.includes('singapore')) tokens.add('singapore')
+  if (lower.includes('vietnam')) tokens.add('vietnam')
+  if (lower.includes('thailand')) tokens.add('thailand')
+  if (lower.includes('hanoi')) tokens.add('hanoi')
+  if (lower.includes('bangkok')) tokens.add('bangkok')
+  if (lower.includes('danang') || lower.includes('da nang')) {
+    tokens.add('danang')
+    tokens.add('nang')
+  }
+
+  return [...tokens]
+}
+
+function buildImageSearchContext(venue: string, location: string): ImageSearchContext {
+  const venueKey = venue.trim().toLowerCase()
+  return {
+    venue,
+    venueKey,
+    location,
+    locationTokens: getLocationTokens(location, venueKey),
+    genericVenue: isGenericVenueName(venue),
+  }
+}
+
+function textMatchesLocationTokens(text: string, tokens: string[]): boolean {
+  if (tokens.length === 0) return true
+  const lower = text.toLowerCase()
+  return tokens.some((token) => lower.includes(token))
 }
 
 function resolveVenue(venue: string): string {
@@ -373,14 +488,24 @@ function searchWords(query: string): string[] {
     .filter((word) => word.length > 2)
 }
 
-function isRelevantSearchResult(query: string, title: string): boolean {
+function isRelevantSearchResult(
+  query: string,
+  title: string,
+  context?: ImageSearchContext,
+): boolean {
   const words = searchWords(query)
   if (words.length === 0) return true
 
   const titleLower = title.toLowerCase()
   const matched = words.filter((word) => titleLower.includes(word)).length
   const required = words.length <= 2 ? words.length : Math.ceil(words.length * 0.6)
-  return matched >= required
+  if (matched < required) return false
+
+  if (context?.genericVenue && !textMatchesLocationTokens(title, context.locationTokens)) {
+    return false
+  }
+
+  return true
 }
 
 async function fetchWithRetry(url: string, signal?: AbortSignal): Promise<Response> {
@@ -396,7 +521,11 @@ async function fetchWithRetry(url: string, signal?: AbortSignal): Promise<Respon
   }
 }
 
-async function wikipediaSearchTitle(query: string, signal?: AbortSignal): Promise<string | null> {
+async function wikipediaSearchTitle(
+  query: string,
+  signal?: AbortSignal,
+  context?: ImageSearchContext,
+): Promise<string | null> {
   const params = new URLSearchParams({
     action: 'opensearch',
     search: query,
@@ -419,7 +548,7 @@ async function wikipediaSearchTitle(query: string, signal?: AbortSignal): Promis
 
   const data = (await response.json()) as [string, string[]]
   const titles = data[1] ?? []
-  return titles.find((title) => isRelevantSearchResult(query, title)) ?? null
+  return titles.find((title) => isRelevantSearchResult(query, title, context)) ?? null
 }
 
 async function wikipediaSummaryData(
@@ -562,10 +691,16 @@ function commonsThumbUrl(filename: string, widthPx = HOTEL_IMAGE_WIDTH_PX): stri
   return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(filename)}?width=${widthPx}`
 }
 
-function scoreWikidataHotelEntity(entity: WikidataSearchEntity, query: string): number {
+function scoreWikidataHotelEntity(
+  entity: WikidataSearchEntity,
+  query: string,
+  context?: ImageSearchContext,
+): number {
   let score = 0
   const labelLower = entity.label.toLowerCase()
   const queryLower = query.toLowerCase()
+  const descriptionLower = entity.description?.toLowerCase() ?? ''
+  const combined = `${labelLower} ${descriptionLower}`
 
   if (labelLower === queryLower) score += 100
   else if (labelLower.includes(queryLower) || queryLower.includes(labelLower)) score += 50
@@ -576,10 +711,20 @@ function scoreWikidataHotelEntity(entity: WikidataSearchEntity, query: string): 
   const matched = words.filter((word) => labelLower.includes(word)).length
   score += matched * 10
 
+  if (context) {
+    const locationMatches = context.locationTokens.filter((token) => combined.includes(token)).length
+    score += locationMatches * 15
+    if (context.genericVenue && locationMatches === 0) return 0
+  }
+
   return score
 }
 
-async function wikidataImageForQuery(query: string, signal?: AbortSignal): Promise<string | null> {
+async function wikidataImageForQuery(
+  query: string,
+  signal?: AbortSignal,
+  context?: ImageSearchContext,
+): Promise<string | null> {
   const searchParams = new URLSearchParams({
     action: 'wbsearchentities',
     search: query,
@@ -605,10 +750,14 @@ async function wikidataImageForQuery(query: string, signal?: AbortSignal): Promi
   if (entities.length === 0) return null
 
   const ranked = entities
-    .map((entity) => ({ entity, score: scoreWikidataHotelEntity(entity, query) }))
+    .map((entity) => ({
+      entity,
+      score: scoreWikidataHotelEntity(entity, query, context),
+    }))
+    .filter(({ score }) => score > 0)
     .sort((a, b) => b.score - a.score)
 
-  if (!ranked[0] || ranked[0].score < 10) return null
+  if (!ranked[0]) return null
 
   const claimsParams = new URLSearchParams({
     action: 'wbgetentities',
@@ -650,7 +799,11 @@ function isUndesirableCommonsFile(title: string): boolean {
   )
 }
 
-function scoreCommonsFileTitle(query: string, title: string): number {
+function scoreCommonsFileTitle(
+  query: string,
+  title: string,
+  context?: ImageSearchContext,
+): number {
   const fileTitle = title.replace(/^File:/, '').toLowerCase()
   const words = searchWords(query)
   if (words.length === 0) return 0
@@ -664,6 +817,12 @@ function scoreCommonsFileTitle(query: string, title: string): number {
 
   if (HOTEL_DESCRIPTION_HINTS.test(fileTitle)) score += 5
 
+  if (context) {
+    const locationMatches = context.locationTokens.filter((token) => fileTitle.includes(token)).length
+    score += locationMatches * 15
+    if (context.genericVenue && locationMatches === 0) return 0
+  }
+
   const required = words.length <= 2 ? words.length : Math.ceil(words.length * 0.5)
   const matched = words.filter((word) => fileTitle.includes(word)).length
   if (matched < required) return 0
@@ -671,7 +830,11 @@ function scoreCommonsFileTitle(query: string, title: string): number {
   return score
 }
 
-async function commonsFileSearch(query: string, signal?: AbortSignal): Promise<string | null> {
+async function commonsFileSearch(
+  query: string,
+  signal?: AbortSignal,
+  context?: ImageSearchContext,
+): Promise<string | null> {
   const searchParams = new URLSearchParams({
     action: 'query',
     list: 'search',
@@ -702,7 +865,7 @@ async function commonsFileSearch(query: string, signal?: AbortSignal): Promise<s
   const ranked = candidates
     .map((result) => ({
       result,
-      score: scoreCommonsFileTitle(query, result.title),
+      score: scoreCommonsFileTitle(query, result.title, context),
     }))
     .filter(({ score }) => score > 0)
     .sort((a, b) => b.score - a.score)
@@ -742,14 +905,15 @@ async function commonsFileSearch(query: string, signal?: AbortSignal): Promise<s
 async function fetchHotelImageUrlForQuery(
   query: string,
   signal?: AbortSignal,
+  context?: ImageSearchContext,
 ): Promise<string | null> {
-  const wikidataUrl = await wikidataImageForQuery(query, signal)
+  const wikidataUrl = await wikidataImageForQuery(query, signal, context)
   if (wikidataUrl) return wikidataUrl
 
-  const commonsUrl = await commonsFileSearch(query, signal)
+  const commonsUrl = await commonsFileSearch(query, signal, context)
   if (commonsUrl) return commonsUrl
 
-  const title = await wikipediaSearchTitle(query, signal)
+  const title = await wikipediaSearchTitle(query, signal, context)
   if (!title) return null
 
   return resolveImageForTitle(title, signal)
@@ -758,6 +922,7 @@ async function fetchHotelImageUrlForQuery(
 export async function fetchPlaceImageUrl(
   query: string,
   signal?: AbortSignal,
+  context?: ImageSearchContext,
 ): Promise<string | null> {
   const cacheKey = query.trim().toLowerCase()
   const cached = getCacheEntry(cacheKey)
@@ -768,7 +933,7 @@ export async function fetchPlaceImageUrl(
 
   const request = (async () => {
     try {
-      const title = await wikipediaSearchTitle(query, signal)
+      const title = await wikipediaSearchTitle(query, signal, context)
       if (!title) {
         setCacheUrl(cacheKey, null, NEGATIVE_CACHE_TTL_MS)
         return null
@@ -814,6 +979,8 @@ export async function fetchPlaceImageForVenue(
   const cachedVenue = getCachedResult(venueKey)
   if (cachedVenue !== undefined) return cachedVenue
 
+  const searchContext = buildImageSearchContext(resolvedVenue, location)
+
   for (const query of buildPlaceSearchQueries(resolvedVenue, location)) {
     const cacheKey = query.trim().toLowerCase()
     const cachedQuery = getCachedResult(cacheKey)
@@ -825,7 +992,7 @@ export async function fetchPlaceImageForVenue(
       continue
     }
 
-    const url = await fetchPlaceImageUrl(query, signal)
+    const url = await fetchPlaceImageUrl(query, signal, searchContext)
     const result = url ? wikimediaResult(url) : null
     setCacheUrl(cacheKey, url, url ? undefined : NEGATIVE_CACHE_TTL_MS)
     if (result) {
@@ -887,6 +1054,7 @@ export async function fetchHotelImageUrl(
   const request = (async (): Promise<PlaceImageResult | null> => {
     try {
       const queries = buildPlaceSearchQueries(hotelName, location)
+      const searchContext = buildImageSearchContext(hotelName, location)
 
       for (const query of queries) {
         const queryKey = `hotel-query:${query.trim().toLowerCase()}`
@@ -899,7 +1067,7 @@ export async function fetchHotelImageUrl(
           continue
         }
 
-        const url = await fetchHotelImageUrlForQuery(query, signal)
+        const url = await fetchHotelImageUrlForQuery(query, signal, searchContext)
         const result = url ? wikimediaResult(url) : null
         setCacheUrl(queryKey, url, url ? undefined : NEGATIVE_CACHE_TTL_MS)
         if (result) {

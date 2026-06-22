@@ -20,7 +20,7 @@ const TRIPADVISOR_KEY = process.env.TRIPADVISOR_API_KEY ?? ''
 const PEXELS_KEY = process.env.PEXELS_API_KEY ?? ''
 const UA = 'AsiaFamilyHoliday/1.0 (https://github.com/denhamd2/asiatrip)'
 
-/** [cacheKey, searchQuery, locationHint] */
+/** [cacheKey, venueName, tripLocationKey] */
 const TARGETS = [
   ['oryx airport hotel', 'Oryx Airport Hotel', 'Doha'],
   ['furama city centre', 'Furama City Centre', 'Singapore'],
@@ -30,17 +30,86 @@ const TARGETS = [
   ['peninsula hotel da nang', 'Peninsula Hotel Da Nang', 'Da Nang'],
   ['little hoi an. a boutique hotel & spa', 'Little Hoi An Boutique Hotel', 'Hoi An'],
   ['peridot grand luxury boutique hotel', 'Peridot Grand Luxury Boutique Hotel', 'Hanoi'],
-  ['azura cruise halong bay', 'Azura Cruise Halong Bay', 'Ha Long Bay'],
+  ['azura cruise halong bay', 'Azura Cruise Halong Bay', 'Halong Bay'],
   ['proverb hotel', 'Proverb Hotel', 'Hanoi'],
   ['bubble forest cafe', 'Bubble Forest Cafe', 'Bangkok'],
   ['samui elephant home', 'Samui Elephant Home', 'Koh Samui'],
-  ['cam thanh basket boat', 'Cam Thanh basket boat Hoi An', 'Hoi An'],
-  ["coco tam's", "Coco Tam's beach bar", 'Koh Samui'],
-  ['solar castle', 'Solar Castle Da Nang', 'Da Nang'],
-  ['pig island tour', 'Pig Island Koh Samui', 'Koh Samui'],
-  ['overlap stone', 'Overlap Stone Koh Samui', 'Koh Samui'],
-  ['han market', 'Han Market Da Nang', 'Da Nang'],
+  ['cam thanh basket boat', 'Cam Thanh basket boat', 'Hoi An'],
+  ["coco tam's", "Coco Tam's", 'Koh Samui'],
+  ['solar castle', 'Solar Castle', 'Da Nang'],
+  ['pig island tour', 'Pig Island', 'Koh Samui'],
+  ['overlap stone', 'Overlap Stone', 'Koh Samui'],
+  ['han market', 'Han Market', 'Da Nang'],
+  ["fisherman's village", "Fisherman's Village", 'Koh Samui'],
+  ['the jungle club', 'The Jungle Club', 'Koh Samui'],
 ]
+
+const LOCATION_MAP = {
+  Doha: { city: 'Doha', country: 'Qatar' },
+  Singapore: { city: 'Singapore', country: 'Singapore' },
+  'Koh Samui': { city: 'Koh Samui', country: 'Thailand' },
+  Bangkok: { city: 'Bangkok', country: 'Thailand' },
+  'Da Nang': { city: 'Da Nang', country: 'Vietnam' },
+  'Hoi An': { city: 'Hoi An', country: 'Vietnam' },
+  Hanoi: { city: 'Hanoi', country: 'Vietnam' },
+  'Halong Bay': { city: 'Ha Long', country: 'Vietnam' },
+}
+
+const VENUE_LOCATION_HINTS = {
+  'bubble forest cafe': 'Pathum Wan, Bangkok',
+  "coco tam's": 'Bophut, Koh Samui',
+  "fisherman's village": 'Bophut, Koh Samui',
+  'han market': 'Hai Chau, Da Nang',
+  'overlap stone': 'Lamai, Koh Samui',
+  'the jungle club': 'Chaweng, Koh Samui',
+  'train street': 'Hoan Kiem, Hanoi',
+}
+
+const GENERIC_VENUE_PATTERNS = [
+  /\bvillage\b/i,
+  /\bmarket\b/i,
+  /\btemple\b/i,
+  /\bbeach\b/i,
+  /\bclub\b/i,
+  /\bstone\b/i,
+  /\bcafe\b/i,
+  /\btour\b/i,
+  /\bhome\b/i,
+]
+
+function isGenericVenueName(venue) {
+  return GENERIC_VENUE_PATTERNS.some((pattern) => pattern.test(venue))
+}
+
+function formatLocationPin(venue, locationKey) {
+  const meta = LOCATION_MAP[locationKey] ?? { city: locationKey, country: '' }
+  if (meta.country) return `${venue}, ${meta.city}, ${meta.country}`
+  return `${venue}, ${meta.city}`
+}
+
+function buildPlaceSearchQueries(venue, locationKey) {
+  const venueKey = venue.trim().toLowerCase()
+  const meta = LOCATION_MAP[locationKey] ?? { city: locationKey, country: '' }
+  const hint = VENUE_LOCATION_HINTS[venueKey]
+  const ordered = []
+
+  const push = (query) => {
+    const trimmed = query.trim()
+    if (trimmed) ordered.push(trimmed)
+  }
+
+  if (hint && meta.country) push(`${venue}, ${hint}, ${meta.country}`)
+  if (hint) {
+    push(`${venue}, ${hint}`)
+    push(`${venue} ${hint}`)
+  }
+  push(formatLocationPin(venue, locationKey))
+  if (meta.city) push(`${venue} ${meta.city}`)
+  if (meta.country) push(`${venue} ${meta.country}`)
+  if (!isGenericVenueName(venue)) push(venue)
+
+  return [...new Set(ordered)]
+}
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -141,16 +210,21 @@ async function commonsPhoto(query) {
   return { url, source: 'curated', attribution: null }
 }
 
-async function resolveTarget([key, query, location]) {
-  const fullQuery = `${query} ${location}`
+async function resolveTarget([key, venue, locationKey]) {
+  const queries = buildPlaceSearchQueries(venue, locationKey)
   const isHotel = key.includes('hotel') || key.includes('nora buri') || key.includes('cruise')
   const category = isHotel ? 'hotels' : 'attractions'
 
-  return (
-    (await tripadvisorPhoto(fullQuery, category)) ??
-    (await pexelsPhoto(fullQuery)) ??
-    (await commonsPhoto(fullQuery))
-  )
+  for (const query of queries) {
+    const hit =
+      (await tripadvisorPhoto(query, category)) ??
+      (await pexelsPhoto(query)) ??
+      (await commonsPhoto(query))
+    if (hit) return hit
+    await sleep(200)
+  }
+
+  return null
 }
 
 const results = {}
