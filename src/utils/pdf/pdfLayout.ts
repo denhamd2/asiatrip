@@ -107,8 +107,14 @@ function drawImageInRect(
   doc.addImage(dataUrl, 'JPEG', x, y, width, height, undefined, 'FAST')
 }
 
-export function drawAllFooters(doc: jsPDF): void {
+export function collectPhotoCredits(dayAttributions: Map<number, string | null>): string[] {
+  return [...new Set([...dayAttributions.values()].filter((value): value is string => Boolean(value)))]
+}
+
+export function drawAllFooters(doc: jsPDF, photoCredits: string[] = []): void {
   const pageCount = doc.getNumberOfPages()
+  const creditsLine =
+    photoCredits.length > 0 ? pdfText(photoCredits.join(' · ')) : null
 
   for (let page = 1; page <= pageCount; page++) {
     doc.setPage(page)
@@ -119,6 +125,11 @@ export function drawAllFooters(doc: jsPDF): void {
     doc.text(`${page} / ${pageCount}`, PDF.PAGE_WIDTH - PDF.MARGIN, PDF.FOOTER_Y, {
       align: 'right',
     })
+    if (creditsLine && page === pageCount) {
+      doc.setFontSize(6.5)
+      const creditLines = doc.splitTextToSize(creditsLine, PDF.PAGE_WIDTH - PDF.MARGIN * 2) as string[]
+      doc.text(creditLines, PDF.MARGIN, PDF.FOOTER_Y + 4)
+    }
     setDrawRgb(doc, PDF_BRAND.panelBorder)
     doc.setLineWidth(0.2)
     doc.line(PDF.MARGIN, PDF.FOOTER_Y - 4, PDF.PAGE_WIDTH - PDF.MARGIN, PDF.FOOTER_Y - 4)
@@ -395,6 +406,7 @@ export function drawDayBlock(
   day: TripDay,
   dayIndex: number,
   featuredImage: string | null,
+  photoAttribution: string | null = null,
 ): void {
   const theme = getPdfTheme(day.location)
   const { doc } = ctx
@@ -472,6 +484,13 @@ export function drawDayBlock(
       2,
       'S',
     )
+    if (photoAttribution) {
+      doc.setFontSize(5.5)
+      doc.setFont('helvetica', 'normal')
+      setRgb(doc, PDF_BRAND.muted)
+      const creditLines = doc.splitTextToSize(pdfText(photoAttribution), photoWidth) as string[]
+      doc.text(creditLines, PDF.PAGE_WIDTH - PDF.MARGIN - photoWidth, blockStartY + photoHeight + 3)
+    }
   }
 
   let sidebarY = blockStartY + headerHeight

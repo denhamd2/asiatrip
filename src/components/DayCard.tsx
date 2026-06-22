@@ -298,6 +298,7 @@ export function DayCard({ data, index, isExpanded, onToggle }: DayCardProps) {
                       venue={stayVenue}
                       location={data.location}
                       enabled={isExpanded}
+                      fetchAs="hotel"
                     />
                   )}
                 </div>

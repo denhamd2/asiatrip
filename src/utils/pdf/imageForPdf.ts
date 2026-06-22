@@ -1,8 +1,10 @@
 import type { TripDay } from '../../types'
+import type { PlaceImageResult } from '../../types/placeImage'
 import {
   extractAirportFromFlights,
   fetchHeroBackgroundImages,
   fetchHeroImageForTitle,
+  fetchHotelImageUrl,
   fetchPlaceImageForVenue,
   getVenueFromAccommodation,
   HERO_WIKIPEDIA_TITLES,
@@ -56,18 +58,18 @@ export async function fetchImageAsDataUrl(url: string): Promise<string | null> {
   }
 }
 
-export async function resolveDayImageUrl(day: TripDay): Promise<string | null> {
+export async function resolveDayImage(day: TripDay): Promise<PlaceImageResult | null> {
   const stayVenue = getVenueFromAccommodation(day.accommodation)
   if (stayVenue) {
-    const url = await fetchPlaceImageForVenue(stayVenue, day.location)
-    if (url) return url
+    const result = await fetchHotelImageUrl(stayVenue, day.location)
+    if (result) return result
   }
 
   if (day.flights) {
     const airport = extractAirportFromFlights(day.flights)
     if (airport) {
-      const url = await fetchPlaceImageForVenue(airport, day.location)
-      if (url) return url
+      const result = await fetchPlaceImageForVenue(airport, day.location)
+      if (result) return result
     }
   }
 
@@ -87,24 +89,26 @@ export async function prefetchImagesForPdf(
 ): Promise<{
   cover: string | null
   dayImages: Map<number, string | null>
+  dayAttributions: Map<number, string | null>
 }> {
   clearPdfImageCache()
 
   const coverUrl = await resolveCoverHeroUrl()
 
-  const dayUrlTasks = await Promise.all(
+  const dayImageTasks = await Promise.all(
     days.map(async (day, index) => {
-      const url = await resolveDayImageUrl(day)
-      return { index, url }
+      const result = await resolveDayImage(day)
+      return { index, result }
     }),
   )
 
   const allUrlTasks = [
-    { kind: 'cover' as const, url: coverUrl },
-    ...dayUrlTasks.map(({ index, url }) => ({
+    { kind: 'cover' as const, url: coverUrl, attribution: null as string | null },
+    ...dayImageTasks.map(({ index, result }) => ({
       kind: 'day' as const,
       index,
-      url,
+      url: result?.url ?? null,
+      attribution: result?.attribution ?? null,
     })),
   ]
 
@@ -129,14 +133,19 @@ export async function prefetchImagesForPdf(
   }
 
   const dayImages = new Map<number, string | null>()
+  const dayAttributions = new Map<number, string | null>()
   for (const task of allUrlTasks) {
     if (task.kind === 'day') {
       dayImages.set(task.index, resolveDataUrl(task.url))
+      if (task.attribution) {
+        dayAttributions.set(task.index, task.attribution)
+      }
     }
   }
 
   return {
     cover: resolveDataUrl(coverUrl),
     dayImages,
+    dayAttributions,
   }
 }

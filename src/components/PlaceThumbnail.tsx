@@ -7,10 +7,22 @@ interface PlaceThumbnailProps {
   venue: string | null
   location: string
   enabled?: boolean
+  /** Which image pipeline to use (not the resolved photo provider). */
+  fetchAs?: 'venue' | 'hotel'
 }
 
-export function PlaceThumbnail({ venue, location, enabled = true }: PlaceThumbnailProps) {
-  const { imageUrl, loading, failed } = usePlaceImage({ venue, location, enabled })
+export function PlaceThumbnail({
+  venue,
+  location,
+  enabled = true,
+  fetchAs = 'venue',
+}: PlaceThumbnailProps) {
+  const { imageUrl, loading, failed, attribution } = usePlaceImage({
+    venue,
+    location,
+    enabled,
+    fetchAs,
+  })
   const [lightboxOpen, setLightboxOpen] = useState(false)
 
   if (!venue || !enabled) return null
@@ -58,6 +70,7 @@ export function PlaceThumbnail({ venue, location, enabled = true }: PlaceThumbna
         <ImageLightbox
           imageUrl={imageUrl}
           caption={venue}
+          attribution={attribution}
           onClose={() => setLightboxOpen(false)}
         />
       )}

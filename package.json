@@ -11,7 +11,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "serve -s dist --listen tcp://0.0.0.0:${PORT:-3000}"
+    "start": "serve -s dist --listen tcp://0.0.0.0:${PORT:-3000}",
+    "curate:photos": "node scripts/curate-venue-images.mjs"
   },
   "dependencies": {
     "jspdf": "^4.2.1",

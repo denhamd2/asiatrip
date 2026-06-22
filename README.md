@@ -33,7 +33,14 @@ This app is configured for [Railway](https://railway.app) via [`railway.toml`](r
 5. Open the **asiatrip** service → **Settings** → **Networking** → **Generate Domain** (fixes **Unexposed service** — without this there is no public URL).
 6. Confirm **Settings → Source** uses branch `main` with deploy-on-push enabled.
 
-No environment variables are required; Railway sets `PORT` automatically.
+No environment variables are required for basic deploy; Railway sets `PORT` automatically.
+
+Optional photo API keys (see [docs/PHOTO-CURATION.md](docs/PHOTO-CURATION.md) and [`.env.example`](.env.example)):
+
+- `VITE_PEXELS_API_KEY` — Pexels fallback for landmarks/hotels not on Wikimedia
+- `VITE_TRIPADVISOR_API_KEY` — TripAdvisor fallback (dev proxy via Vite; prefer curated map in production)
+
+Regenerate curated venue photos: `node scripts/curate-venue-images.mjs`
 
 Railpack detects this Vite app and serves the `dist/` folder via its built-in static server (Caddy). Do **not** set a custom start command — that disables SPA mode and can leave the service offline.
 

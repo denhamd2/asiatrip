@@ -4,10 +4,16 @@ import { useEffect } from 'react'
 interface ImageLightboxProps {
   imageUrl: string
   caption: string
+  attribution?: string | null
   onClose: () => void
 }
 
-export function ImageLightbox({ imageUrl, caption, onClose }: ImageLightboxProps) {
+export function ImageLightbox({
+  imageUrl,
+  caption,
+  attribution,
+  onClose,
+}: ImageLightboxProps) {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose()
@@ -50,6 +56,9 @@ export function ImageLightbox({ imageUrl, caption, onClose }: ImageLightboxProps
         />
         <div className="border-t border-slate-100 px-5 py-3">
           <p className="text-sm font-semibold text-slate-800">{caption}</p>
+          {attribution && (
+            <p className="mt-1 text-xs text-slate-500">{attribution}</p>
+          )}
         </div>
       </div>
     </div>

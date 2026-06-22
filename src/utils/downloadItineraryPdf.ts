@@ -3,6 +3,7 @@ import type { TripDay } from '../types'
 import { prefetchImagesForPdf } from './pdf/imageForPdf'
 import {
   PDF,
+  collectPhotoCredits,
   drawAllFooters,
   drawCoverPage,
   drawDayBlock,
@@ -32,7 +33,7 @@ export async function downloadItineraryPdf(
 
   options?.onProgress?.('Preparing images…')
 
-  const { cover, dayImages } = await prefetchImagesForPdf(days, (current, total) => {
+  const { cover, dayImages, dayAttributions } = await prefetchImagesForPdf(days, (current, total) => {
     options?.onProgress?.(`Loading images (${current}/${total})…`)
   })
 
@@ -56,10 +57,10 @@ export async function downloadItineraryPdf(
   ctx.y = PDF.MARGIN
 
   days.forEach((day, index) => {
-    drawDayBlock(ctx, day, index, dayImages.get(index) ?? null)
+    drawDayBlock(ctx, day, index, dayImages.get(index) ?? null, dayAttributions.get(index) ?? null)
   })
 
-  drawAllFooters(doc)
+  drawAllFooters(doc, collectPhotoCredits(dayAttributions))
 
   const filename = options?.filterLabel
     ? `Asia Family Holiday 2026 — ${options.filterLabel}.pdf`
