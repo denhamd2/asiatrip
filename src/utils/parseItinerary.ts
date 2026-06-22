@@ -110,21 +110,31 @@ function parseTimeLabel(label: string): ParsedTimeRange | null {
   return null
 }
 
-function splitItineraryLine(line: string): { timeLabel: string; text: string } {
+export function cleanTimeLabel(timeLabel: string): string {
+  return timeLabel.replace(/[:\s-]+$/g, '').trim()
+}
+
+export function splitItineraryLine(line: string): { timeLabel: string; text: string } {
   const timeRegex =
-    /^(\d{1,2}(?::\d{2})?\s*(?:AM|PM|h|H)?(?:\+)?\s*(?:-\s*\d{1,2}(?::\d{2})?\s*(?:AM|PM|h|H)?)?[:\s-]*)/i
+    /^(\d{1,2}(?::\d{2})?\s*(?:AM|PM|am|pm|h|H)?(?:\+)?\s*(?:-\s*(?:\d{1,2}(?::\d{2})?\s*(?:AM|PM|am|pm|h|H)?|Noon|Midnight))?[:\s-]*)/i
   const wordTimeRegex = /^((?:Morning|Afternoon|Evening|Night|Day)[:\s-]*)/i
+  const bare24hRegex = /^(\d{1,2}:\d{2}:?\s*)/
 
   const match = line.match(timeRegex)
   const wordMatch = line.match(wordTimeRegex)
+  const bareMatch = line.match(bare24hRegex)
 
   if (match) {
-    const timeLabel = match[1]
-    return { timeLabel, text: line.substring(timeLabel.length).trim() }
+    const rawLabel = match[1]
+    return { timeLabel: cleanTimeLabel(rawLabel), text: line.substring(rawLabel.length).trim() }
   }
   if (wordMatch) {
-    const timeLabel = wordMatch[1]
-    return { timeLabel, text: line.substring(wordMatch[1].length).trim() }
+    const rawLabel = wordMatch[1]
+    return { timeLabel: cleanTimeLabel(rawLabel), text: line.substring(rawLabel.length).trim() }
+  }
+  if (bareMatch && !/^\d{1,2}:\d{2}\s*(AM|PM)/i.test(line)) {
+    const rawLabel = bareMatch[1]
+    return { timeLabel: cleanTimeLabel(rawLabel), text: line.substring(rawLabel.length).trim() }
   }
 
   return { timeLabel: '', text: line.trim() }

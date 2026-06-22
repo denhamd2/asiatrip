@@ -15,7 +15,14 @@ import { getLocationTheme } from '../data/tripData'
 import type { TripDay } from '../types'
 import { getBookingLinksForDay } from '../utils/bookings'
 import { buildGoogleCalendarUrl, getActivitiesForDay } from '../utils/calendar'
+import { extractVenue } from '../utils/locations'
+import {
+  extractAirportFromFlights,
+  getVenueFromAccommodation,
+} from '../utils/placeImages'
 import type { ParsedActivity } from '../utils/parseItinerary'
+import { cleanTimeLabel, splitItineraryLine } from '../utils/parseItinerary'
+import { PlaceThumbnail } from './PlaceThumbnail'
 
 interface DayCardProps {
   data: TripDay
@@ -24,12 +31,23 @@ interface DayCardProps {
   onToggle: () => void
 }
 
-function formatItinerary(
-  text: string,
-  dotClass: string,
-  ringClass: string,
-  activities: ParsedActivity[],
-) {
+interface ItineraryTimelineProps {
+  text: string
+  location: string
+  dotClass: string
+  ringClass: string
+  activities: ParsedActivity[]
+  enabled: boolean
+}
+
+function ItineraryTimeline({
+  text,
+  location,
+  dotClass,
+  ringClass,
+  activities,
+  enabled,
+}: ItineraryTimelineProps) {
   if (!text) {
     return (
       <p className="py-3 pl-8 text-sm italic text-slate-400">
@@ -42,23 +60,7 @@ function formatItinerary(
   let activityIdx = 0
 
   return lines.map((line, idx) => {
-    const timeRegex =
-      /^(\d{1,2}(?::\d{2})?\s*(?:AM|PM|h|H)?(?:\+)?\s*(?:-\s*\d{1,2}(?::\d{2})?\s*(?:AM|PM|h|H)?)?[:\s-]*)/i
-    const match = line.match(timeRegex)
-
-    const wordTimeRegex = /^((?:Morning|Afternoon|Evening|Night|Day)[:\s-]*)/i
-    const wordMatch = line.match(wordTimeRegex)
-
-    let timeLabel = ''
-    let remainingText = line
-
-    if (match) {
-      timeLabel = match[1]
-      remainingText = line.substring(timeLabel.length).trim()
-    } else if (wordMatch) {
-      timeLabel = wordMatch[1]
-      remainingText = line.substring(wordMatch[1].length).trim()
-    }
+    let { timeLabel, text: remainingText } = splitItineraryLine(line)
 
     if (remainingText.startsWith('-') || remainingText.startsWith('•')) {
       remainingText = remainingText.substring(1).trim()
@@ -66,32 +68,40 @@ function formatItinerary(
 
     const hasTime = Boolean(timeLabel)
     const activity = hasTime ? activities[activityIdx++] : undefined
+    const venue = extractVenue(remainingText)
 
     return (
       <div key={idx} className="group relative py-3 pl-8 sm:pl-10">
         <div
           className={`absolute top-[18px] left-[-5px] z-10 h-2.5 w-2.5 rounded-full ring-4 ring-white transition-all group-hover:scale-125 ${dotClass} ${ringClass}`}
         />
-        {timeLabel && (
-          <div className="mb-1.5 inline-block">
-            <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold tracking-wide text-slate-700 uppercase">
-              {timeLabel.replace(/[:\-]$/, '').trim()}
-            </span>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            {timeLabel && (
+              <div className="mb-1.5 inline-block">
+                <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold tracking-wide text-slate-700 uppercase">
+                  {cleanTimeLabel(timeLabel)}
+                </span>
+              </div>
+            )}
+            <p className="text-[15px] leading-relaxed text-slate-700">{remainingText}</p>
+            {activity && (
+              <a
+                href={buildGoogleCalendarUrl(activity)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-900"
+              >
+                <CalendarPlus size={12} />
+                Add to Calendar
+                <ExternalLink size={10} className="opacity-60" />
+              </a>
+            )}
           </div>
-        )}
-        <p className="text-[15px] leading-relaxed text-slate-700">{remainingText}</p>
-        {activity && (
-          <a
-            href={buildGoogleCalendarUrl(activity)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-900"
-          >
-            <CalendarPlus size={12} />
-            Add to Calendar
-            <ExternalLink size={10} className="opacity-60" />
-          </a>
-        )}
+          {venue && (
+            <PlaceThumbnail venue={venue} location={location} enabled={enabled} />
+          )}
+        </div>
       </div>
     )
   })
@@ -108,11 +118,16 @@ export function DayCard({ data, index, isExpanded, onToggle }: DayCardProps) {
 
   const bookingLinks = useMemo(() => getBookingLinksForDay(data), [data])
   const parsedActivities = useMemo(() => getActivitiesForDay(data), [data])
+  const stayVenue = useMemo(() => getVenueFromAccommodation(data.accommodation), [data.accommodation])
+  const airportVenue = useMemo(
+    () => (data.flights ? extractAirportFromFlights(data.flights) : null),
+    [data.flights],
+  )
 
   return (
     <article
       id={`day-${index}`}
-      className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition-all hover:shadow-md"
+      className="day-card overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition-all hover:shadow-md"
     >
       <button
         type="button"
@@ -177,7 +192,7 @@ export function DayCard({ data, index, isExpanded, onToggle }: DayCardProps) {
       </button>
 
       <div
-        className={`grid transition-all duration-300 ease-in-out ${
+        className={`day-card-body grid transition-all duration-300 ease-in-out ${
           isExpanded
             ? 'max-h-[6000px] border-t border-slate-100 opacity-100'
             : 'max-h-0 overflow-hidden opacity-0'
@@ -191,7 +206,18 @@ export function DayCard({ data, index, isExpanded, onToggle }: DayCardProps) {
                   <Plane size={16} />
                   <h4 className="text-xs font-bold tracking-wider uppercase">Transport</h4>
                 </div>
-                <p className="text-[15px] leading-relaxed text-slate-700">{data.flights}</p>
+                <div className="flex items-start justify-between gap-3">
+                  <p className="min-w-0 flex-1 text-[15px] leading-relaxed text-slate-700">
+                    {data.flights}
+                  </p>
+                  {airportVenue && (
+                    <PlaceThumbnail
+                      venue={airportVenue}
+                      location={data.location}
+                      enabled={isExpanded}
+                    />
+                  )}
+                </div>
               </div>
             )}
 
@@ -244,6 +270,11 @@ export function DayCard({ data, index, isExpanded, onToggle }: DayCardProps) {
                       >
                         <Mail size={14} className="shrink-0 text-violet-500" />
                         <span className="min-w-0 flex-1 truncate">{link.label}</span>
+                        {!link.isDirect && (
+                          <span className="shrink-0 rounded bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-violet-600 uppercase">
+                            Search
+                          </span>
+                        )}
                         <ExternalLink size={12} className="shrink-0 opacity-50" />
                       </a>
                     </li>
@@ -258,7 +289,18 @@ export function DayCard({ data, index, isExpanded, onToggle }: DayCardProps) {
                   <Bed size={16} />
                   <h4 className="text-xs font-bold tracking-wider uppercase">Stay</h4>
                 </div>
-                <p className="text-[15px] leading-relaxed text-slate-700">{data.accommodation}</p>
+                <div className="flex items-start justify-between gap-3">
+                  <p className="min-w-0 flex-1 text-[15px] leading-relaxed text-slate-700">
+                    {data.accommodation}
+                  </p>
+                  {stayVenue && (
+                    <PlaceThumbnail
+                      venue={stayVenue}
+                      location={data.location}
+                      enabled={isExpanded}
+                    />
+                  )}
+                </div>
               </div>
             )}
 
@@ -281,7 +323,14 @@ export function DayCard({ data, index, isExpanded, onToggle }: DayCardProps) {
               Daily Plan
             </h4>
             <div className="relative ml-2 space-y-1 border-l-2 border-slate-200/80">
-              {formatItinerary(data.itinerary, theme.dot, theme.ring, parsedActivities)}
+              <ItineraryTimeline
+                text={data.itinerary}
+                location={data.location}
+                dotClass={theme.dot}
+                ringClass={theme.ring}
+                activities={parsedActivities}
+                enabled={isExpanded}
+              />
             </div>
           </section>
         </div>

@@ -2,6 +2,7 @@ import {
   Calendar,
   CalendarPlus,
   ChevronRight,
+  FileDown,
   Globe2,
   MapPin,
   Plane,
@@ -9,8 +10,10 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { DayCard } from './components/DayCard'
+import { HeroBackground } from './components/HeroBackground'
 import {
   defaultTripData,
+  getTripDateRange,
   getTripStats,
   getUniqueDestinations,
 } from './data/tripData'
@@ -49,9 +52,12 @@ export default function App() {
   const [isFullFileLoaded, setIsFullFileLoaded] = useState(false)
   const [expandedDays, setExpandedDays] = useState<Set<number>>(() => new Set([0]))
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
+  const [pdfGenerating, setPdfGenerating] = useState(false)
+  const [pdfProgress, setPdfProgress] = useState<string | null>(null)
 
   const stats = useMemo(() => getTripStats(tripData), [tripData])
   const destinations = useMemo(() => getUniqueDestinations(tripData), [tripData])
+  const dateRange = useMemo(() => getTripDateRange(tripData), [tripData])
 
   const filteredData = useMemo(() => {
     if (!activeFilter) return tripData.map((day, index) => ({ day, index }))
@@ -84,6 +90,7 @@ export default function App() {
           cost: r[5] || '',
           notes: r[6] || '',
           itinerary: r[7] || (r[4] ? `Activity: ${r[4]}` : ''),
+          gmailUrl: r[8] || undefined,
         })
       }
 
@@ -109,28 +116,41 @@ export default function App() {
   const expandAll = () => setExpandedDays(new Set(tripData.map((_, i) => i)))
   const collapseAll = () => setExpandedDays(new Set())
 
+  const handleDownloadPdf = async () => {
+    setPdfGenerating(true)
+    setPdfProgress('Starting…')
+    try {
+      const { downloadItineraryPdf } = await import('./utils/downloadItineraryPdf')
+      await downloadItineraryPdf(filteredData.map(({ day }) => day), {
+        filterLabel: activeFilter,
+        onProgress: setPdfProgress,
+      })
+    } finally {
+      setPdfGenerating(false)
+      setPdfProgress(null)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-100 via-slate-50 to-emerald-50/30 text-slate-800">
       {/* Hero */}
       <header className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-700 via-teal-700 to-cyan-800" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.15),transparent_40%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.1),transparent_35%)]" />
+        <HeroBackground />
 
         <div className="relative mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-14">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
-              <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold tracking-widest text-emerald-100 uppercase backdrop-blur-sm">
+              <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold tracking-widest text-white/80 uppercase backdrop-blur-sm">
                 <Globe2 size={14} />
                 Family Adventure
               </p>
               <h1 className="font-[family-name:var(--font-display)] text-4xl leading-tight font-bold tracking-tight text-white sm:text-5xl">
                 Asia Family Holiday 2026
               </h1>
-              <p className="mt-3 flex flex-wrap items-center gap-2 text-emerald-100/90">
+              <p className="mt-3 flex flex-wrap items-center gap-2 text-white/70">
                 <Calendar size={16} />
                 <span className="font-medium">
-                  {tripData[0]?.date} — {tripData[tripData.length - 1]?.date}
+                  {dateRange ? `${dateRange.start} — ${dateRange.end}` : ''}
                 </span>
               </p>
 
@@ -166,6 +186,15 @@ export default function App() {
             </div>
 
             <div className="flex shrink-0 flex-col gap-3 sm:flex-row sm:items-center">
+              <button
+                type="button"
+                onClick={() => void handleDownloadPdf()}
+                disabled={pdfGenerating || filteredData.length === 0}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/15 px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-white/25 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <FileDown size={18} />
+                <span>{pdfGenerating ? pdfProgress ?? 'Generating PDF…' : 'Download PDF'}</span>
+              </button>
               <button
                 type="button"
                 onClick={() => downloadICS(tripData)}

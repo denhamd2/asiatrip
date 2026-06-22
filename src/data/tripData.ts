@@ -1,13 +1,16 @@
 import type { TripDay } from '../types'
+import { getLocationMeta } from '../utils/locations'
 
 export const defaultTripData: TripDay[] = [
   {
     date: 'Tue, June 30',
     location: 'Transit',
-    flights: 'Flight QR20: DUB → DOH (08:15). QR948: DOH → SIN (02:35-15:45). Qatar Airways',
-    accommodation: 'Flight',
-    cost: '€3,832.88',
-    notes: 'Flight Details: Qatar Airways Economy (25kg baggage). 07:05h leg followed by 08:10h leg. Flight was changed (hence the later arrival time) - standard leg room on the 2nd leg (no extra leg room).',
+    flights:
+      'Flight from Dublin to Singapore (via Doha)\nFlight QR20: DUB → DOH (08:15). QR948: DOH → SIN (02:35-15:45).\nQatar Airways\nDoha layover: Oryx Airport Hotel',
+    accommodation: 'Oryx Airport Hotel',
+    cost: '€4,245.25',
+    notes:
+      'Flight Details: Qatar Airways Economy (25kg baggage). 07:05h leg followed by 08:10h leg.\nExtra leg room for 2nd leg.\nFlights €3,832.88. Doha layover: Booked and paid for on Booking.com (€412.37).',
     baggage: [
       {
         airline: 'Qatar Airways (Economy)',
@@ -16,7 +19,7 @@ export const defaultTripData: TripDay[] = [
       },
     ],
     itinerary:
-      '06:00 AM: Fast Track T1 & Phoenix Lounge Dublin Airport - booked & paid for\n15:45 PM: Land Changi T1.\n16:30-17:30 PM: Immigration/bags/customs.\n17:30-18:30 PM: MRT (Changi Airport → Chinatown/Clarke Quay, ~1h SGD2-4pp) or Grab (~20-30min SGD25-35 family).\nLook up express pass for immigration',
+      '06:00 AM: Fast Track T1 & Phoenix Lounge Dublin Airport - booked & paid for\n\n08:15 AM: Flight QR20 DUB → DOH\n\nDoha layover: Oryx Airport Hotel — hotel stay in terminal for long layover.\n\n02:35 AM: Flight QR948 DOH → SIN (arr. 15:45)\n\n15:45 PM: Land Changi T1.\n\n16:30-17:30 PM: Immigration/bags/customs. See Jewel Changi Airport\n\n17:30-18:30 PM: MRT (Changi Airport → Chinatown/Clarke Quay, ~1h SGD2-4pp) or Grab (~20-30min SGD25-35 family).',
   },
   {
     date: 'Wed, July 1',
@@ -26,7 +29,7 @@ export const defaultTripData: TripDay[] = [
     cost: '€261.88',
     notes: 'Booked and paid',
     itinerary:
-      '18:30 PM+: Check-in Furama (pool if open till 10 PM, unwind).\n19-21 PM: Maxwell Food Centre hawker dinner nearby (~SGD20pp; chicken rice/oyster omelette).\nEvening: Relax, light Chinatown night walk',
+      '18:30 PM+: Check-in Furama (pool if open till 10 PM, unwind).\n\n19-21 PM: Maxwell Food Centre hawker dinner nearby (~SGD20pp; chicken rice/oyster omelette).\n\nEvening: Relax, light Chinatown night walk',
   },
   {
     date: 'Thu, July 2',
@@ -36,7 +39,7 @@ export const defaultTripData: TripDay[] = [
     cost: '€1,131.01',
     notes: 'Booked, not yet paid.',
     itinerary:
-      '8-9 AM: Furama breakfast.\n9:00 AM: Leave Furama, Grab to Marina Bay Sands (~10 min).\n9:30-10:30 AM: Drop luggage & do preliminary check-in to get temporary keycard (unlocks pool & SkyPark Observation Deck access).\n10:30-11:30 AM: SkyPark Observation Deck (360° views; 30-45 min).\n1:00 PM: Lunch at Rasapura Masters / The Shoppes (B2 food hall).\n2:00 PM: Browse The Shoppes mall.\n2:45 PM: Back at check-in desk to collect room keys (early in case of queue).\n3:00 PM: Drop bags in room, freshen up.\n4:00 PM: Walk down to Merlion Park / promenade for photos (~20 min walk each way).\n6:30 PM: Head back to MBS for sunset.\n7:13 PM: Sunset from the Infinity Pool (sunset is ~7:13 PM that day).\n8:00 PM+: Dinner after sunset.\n9:00 PM: Spectra Light & Water Show (9 PM show; viewable from room/promenade).',
+      '8-9 AM: Furama breakfast.\n\n9:30-11 AM: MRT/Grab to MBS (~10min SGD5-10), SkyPark Observation Deck first (open 9:30AM; 30-45min, SGD32/adult; 360° views). Confirm keycard access.\n\n11 AM-Noon: Concierge bag storage.\n\n12-1 PM: Rasapura Masters B2 lunch (Alis Grill pizza, burgers SGD40-60 total).\n\n1-3 PM: Shoppes mall stroll to Merlion Park/promenade (20min walk).\n\n3 PM: MBS check-in (pool unlocks).\n\n3-5 PM: Infinity Pool lounging\n\n5-6 PM: Pool dips/jacuzzi.\n\n6-7:30 PM: Lau Pa Sat hawker dinner (~SGD25-35pp; satay/seafood).\n\n7:45 PM: Watch the "Garden Rhapsody" light and sound show at Gardens by the Bay — Supertree Grove (~10-15 min).\n\n8:45 PM: Watch the repeat show from our room.',
   },
   {
     date: 'Fri, July 3',
@@ -46,7 +49,7 @@ export const defaultTripData: TripDay[] = [
     cost: '€809.54',
     notes: 'Booked and paid for on credit card',
     itinerary:
-      '11 AM: MBS checkout, bag storage; walk to Gardens by the Bay (6 min).\n11 AM-2:30 PM: Gardens by the Bay (spend most of the day here) - Cloud Forest/Flower Dome (Jurassic combo SGD48/adult), OCBC Skyway (SGD14), outdoor gardens & Supertrees photos (free), Satay by the Bay lunch (SGD15pp).\n3:00 PM: Check-in at Furama, settle.\n3:30-5 PM: Chinatown (Peranakan shophouses, Ann Siang Hill, Pagoda St temples/markets).\n5:30-7 PM: Lau Pa Sat hawker dinner (SGD25-35).\nEvening: MRT to Brewerkz (craft beers), Haji Lane (vintage shopping).',
+      '11 AM: MBS checkout, bag storage; walk to Gardens by the Bay (6 min).\n\n11 AM-2:30 PM: Gardens by the Bay (spend most of the day here) — Cloud Forest/Flower Dome (Jurassic combo SGD48/adult), OCBC Skyway (SGD14), outdoor gardens & Supertrees photos (free), Satay by the Bay lunch (SGD15pp).\n\n3:00 PM: Check-in at Furama, settle.\n\n3:30-5 PM: Chinatown (Peranakan shophouses, Ann Siang Hill, Pagoda St temples/markets).\n\n5:30-7 PM: Lau Pa Sat hawker dinner (SGD25-35).\n\nEvening: MRT to Brewerkz (craft beers), Haji Lane (vintage shopping).',
   },
   {
     date: 'Sat, July 4',
@@ -54,9 +57,9 @@ export const defaultTripData: TripDay[] = [
     flights: '',
     accommodation: 'Furama City Centre, 60 Eu Tong Sen Street, Singapore 059804',
     cost: '€213.86',
-    notes: 'Activity: Universal Studios. Booked and paid Universal tickets for on Klook',
+    notes: 'Booked and paid Universal tickets for on Klook',
     itinerary:
-      '7:30-8 AM: Furama breakfast.\n8-9:30 AM: MRT HarbourFront, cable car Sky Pass (SGD35/adult) to USS (Universal Studios Singapore opening hours: 10am-8pm).\n10 AM-3 PM: Rides (Sci-Fi/Transformers/Mummy; Jurassic Rapids/Puss/WaterWorld lunch SGD15; Far Far Away/Minions/Hollywood).\n3-4:30 PM: Harry Potter: Visions of Magic at Resorts World Sentosa (WEAVE, Level B1, right next to USS; immersive interactive experience, ~60 min; last entry 8pm).\n4:30-7 PM: Sentosa Express/bus to Palawan Beach (SGD1, rope bridge/sand relax).\n7-8 PM: MRT/Grab back Furama (30 min), dinner/pool.',
+      'Universal Studios Singapore\n\n7:30-8 AM: Furama breakfast.\n\n8-9:30 AM: MRT HarbourFront, cable car Sky Pass (SGD35/adult) to USS.\n\n9:30 AM-4 PM: Rides (Sci-Fi/Transformers/Mummy; Jurassic Rapids/Puss/WaterWorld lunch SGD15; Far Far Away/Minions/Hollywood).\n\n4-6 PM: Harry Potter on Sentosa — Harry Potter: Visions of Magic at Resorts World Sentosa (short walk from USS).\n\n6-7 PM: Sentosa Express/bus to Palawan Beach (SGD1, rope bridge/sand relax).\n\n7-8 PM: MRT/Grab back Furama (30 min), dinner/pool.',
   },
   {
     date: 'Sun, July 5',
@@ -66,15 +69,17 @@ export const defaultTripData: TripDay[] = [
     cost: '',
     notes: '',
     itinerary:
-      '8-9:30 AM: Furama breakfast, MRT to Little India.\n9:30-11 AM: Little India highlights—Tekka Centre (spices, sweets SGD5-10), Sri Veeramakaliamman Temple (statues/photos, free), Serangoon Rd murals/shops.\n11:00 AM: Raffles Long Bar right at opening to beat the queue (walk-in only, no reservations; Sun 11am-10:30pm last seating). Birthplace of the Singapore Sling (SGD35)—toss your peanut shells on the floor! Avoid the 4-7 PM rush.\n12:30 PM: Lunch at Lau Pa Sat (SGD40 crayfish).\n2-4:30 PM: Fort Canning Park (Tree Tunnel photos, Jubilee playground, Spice Garden; skip Battle Box if tired).\nEvening: Back to Furama, dinner/pool; optional Clarke Quay riverside stroll.',
+      '8-9:30 AM: Furama breakfast, MRT to Little India.\n\n9:30-11 AM: Little India highlights—Tekka Centre (spices, sweets SGD5-10), Sri Veeramakaliamman Temple (statues/photos, free), Serangoon Rd murals/shops.\n\n11:00 AM: Raffles Long Bar right at opening to beat the queue (walk-in only, no reservations; Sun 11am-10:30pm last seating). Birthplace of the Singapore Sling (SGD35)—toss your peanut shells on the floor! Avoid the 4-7 PM rush.\n\n12:30 PM: Lunch at Lau Pa Sat (SGD40 crayfish).\n\n2-4:30 PM: Fort Canning Park (Tree Tunnel photos, Jubilee playground, Spice Garden; skip Battle Box if tired).\n\nEvening: Back to Furama, dinner/pool; optional Clarke Quay riverside stroll.',
   },
   {
     date: 'Mon, July 6',
     location: 'Koh Samui',
-    flights: 'Flight PG968: 17.20-18.15 on Bangkok Airways',
+    flights:
+      'Flight from Singapore to Koh Samui\nFlight PG968: 17.20-18.15 on Bangkok Airways\nPrivate Minibus Transfer from airport',
     accommodation: 'Nora Buri - 2x pool villas with hilltop view. Breakfast included.',
-    cost: '€3,209.57',
-    notes: 'Flight: 4 cabin bags & 4 checked bags. Hotel booked and paid.',
+    cost: '€3,233.24',
+    notes:
+      'Flight €641.57. 4 cabin bags: 23 x 36 x 50 cm · Max weight 7 kg. 4 checked bags: Max weight 20 kg. 4 seats selected: 18D, 18A, 18C, 18B.\nTransfer: Booked and paid for return journey on Hoppa (€23.67). Ref G2561395.\nStay: Booked and paid for on credit card (€2,568.00).',
     baggage: [
       {
         airline: 'Bangkok Airways (Economy)',
@@ -83,7 +88,7 @@ export const defaultTripData: TripDay[] = [
       },
     ],
     itinerary:
-      '8-9:30 AM: Furama breakfast, pack up.\n11:00 AM: Check out of Furama (checkout time is 11 AM); store bags at reception if needed.\n11:30 AM-1:30 PM: Last Chinatown wander / lunch nearby.\n1:30 PM: MRT/train to Changi Airport (Chinatown → Tanah Merah change → Changi, ~1h; SGD2-4pp). Allow buffer for bags.\n2:30-3:45 PM: Explore Jewel Changi Airport (HSBC Rain Vortex waterfall, Shiseido Forest Valley) - moved here from arrival day as you\'ll be far less tired now.\n3:45 PM: Check in for PG968 (17:20 departure).\n17:20-18:15: Flight PG968 to Koh Samui (Bangkok Airways).\n18:30-19:00 PM: Grab to hotel (~€13 family).\n19:00 PM+: Check-in/pool; dinner Barge (€26 family).\nHappy hour 16:00-19:00 (cocktails €4-7, beers €2-3).\nOptional Village intro.',
+      '8-9:30 AM: Furama breakfast, pack up.\n\n11:00 AM: Check out of Furama (checkout time is 11 AM); store bags at reception if needed.\n\n11:30 AM-1:30 PM: Last Chinatown wander / lunch nearby.\n\n1:30 PM: MRT/train to Changi Airport (Chinatown → Tanah Merah change → Changi, ~1h; SGD2-4pp). Allow buffer for bags.\n\n2:30-3:45 PM: Explore Jewel Changi Airport (HSBC Rain Vortex waterfall, Shiseido Forest Valley).\n\n3:45 PM: Check in for PG968 (17:20 departure).\n\n17:20: Flight PG968 SIN → USM (Bangkok Airways).\n\n18:15: Land Koh Samui. Airport meet and greet; private minibus to Nora Buri (Hoppa ref G2561395).\n\n19:00+: Check-in/pool; dinner Barge (€26 family).\n\nHappy hour 16:00-19:00 (cocktails €4-7, beers €2-3).\n\nOptional Village intro.',
   },
   {
     date: 'Tue, July 7',
@@ -91,9 +96,9 @@ export const defaultTripData: TripDay[] = [
     flights: '',
     accommodation: 'Nora Buri - 2x pool villas with hilltop view. Breakfast included.',
     cost: '',
-    notes: "Activity: Fisherman's Village + Overlap Stone",
+    notes: '',
     itinerary:
-      "08:00-09:00 AM: Nora Buri breakfast.\n09:30-11:30 AM: Overlap Stone hike (Lamai; 15min Grab from Nora ~300 THB / €8 family). Entry 100-200 THB PP, early low crowds.\n15:00 PM: Fisherman's Village (~10min Grab) - stroll around\n17:00 PM: Coco Tam's fire show - Fire show is 7:15pm, get there at 5pm. Market shops. Lucky beer (€6-€10 pints, happy hour).",
+      'Fisherman\'s Village + Overlap Stone (Timed Schedule)\n08:00-09:00: Nora Buri breakfast.\n\n09:30-11:30: Overlap Stone hike (Lamai; 15min Grab from Nora ~300 THB / €8 family).\nEntry 100-200 THB / €3-€5 PP Stone 1 (photo slot/drink); Stone 2 +50-200 THB / €1-€5; 1hr moderate trail (shoes/water).- €20 family; early low crowds.\n\n15:00: Fisherman\'s Village (~10min Grab) - stroll around\n\n17:00: : Coco Tam\'s fire show  - Fire show is 7:15pm, get there at 5pm\n\nMarket shops (Sophie/Ava).\n\nLucky beer (€6-€10 pints, happy hour).',
   },
   {
     date: 'Wed, July 8',
@@ -101,9 +106,9 @@ export const defaultTripData: TripDay[] = [
     flights: '',
     accommodation: 'Nora Buri - 2x pool villas with hilltop view. Breakfast included.',
     cost: '€90.33',
-    notes: 'Samui Elephant Home Feeding Experience. Booked & paid on Klook.',
+    notes: 'Booked elephant experience & paid for on Klook. \n\nBooked the Jungle Club for 6pm.',
     itinerary:
-      '11:00-12:00 PM: Samui Elephant Home Feeding Experience. Includes round-trip transfers to and from the hotel.\nAfternoon: pool recovery.\n18:00 PM: Dinner at The Jungle Club - booked',
+      'Samui Elephant Home Feeding Experience\nMorning Session(11:00-12:00)\nIncludes round-trip transfers to and from the hotel \n\nAfternoon pool recovery.\n\n18:00 - Dinner at The Jungle Club - booked',
   },
   {
     date: 'Thu, July 9',
@@ -111,9 +116,9 @@ export const defaultTripData: TripDay[] = [
     flights: '',
     accommodation: 'Nora Buri - 2x pool villas with hilltop view. Breakfast included.',
     cost: '€177.84',
-    notes: 'Pig Island Tour. Booked & paid for on Klook',
+    notes: 'Booked & paid for on Klook',
     itinerary:
-      '08:00 AM: Pickup included - Koh Samui Island Hopping & Relaxing Tour: Coral and Pig Island – Full Day.\n15:00 PM: Return to hotel.\n15:00-17:00 PM: Pool relax.',
+      'Pig Island Tour\n08:00: Pickup included - Koh Samui Island Hopping & Relaxing Tour: Coral and Pig Island – Full Day(Small Group Tour with Entrance Fees and Hotel Pickup)\n15:00: Return to hotel\n\n\n15:00-17:00: Pool relax.',
   },
   {
     date: 'Fri, July 10',
@@ -121,9 +126,8 @@ export const defaultTripData: TripDay[] = [
     flights: '',
     accommodation: 'Nora Buri - 2x pool villas with hilltop view. Breakfast included.',
     cost: '',
-    notes: 'Koh Tao/Nang Yuan Tour',
-    itinerary:
-      '07:30-17:00 PM: GetYourGuide speedboat (snorkel/turtles/viewpoint) - €190 family incl. lunch/snorkel gear.\n17:30 PM+: Nora dinner; Lobby Bar specials: cocktails ~200 THB / €5.\nEvening: Pack for flight.',
+    notes: '',
+    itinerary: 'Free day',
   },
   {
     date: 'Sat, July 11',
@@ -133,15 +137,17 @@ export const defaultTripData: TripDay[] = [
     cost: '',
     notes: '',
     itinerary:
-      'Day: Chill Day at hotel & Lamai beach.\n16:00-19:00 PM: Pool happy hour (€4 cocktails).',
+      'Chill Day at hotel & Lamai beach\n\n16:00-19:00: Pool happy hour (€4 cocktails).',
   },
   {
     date: 'Sun, July 12',
     location: 'Bangkok',
-    flights: 'Flight PG106: 08:45am-10:00am. Bangkok Airways',
-    accommodation: 'The Berkeley Hotel Pratunam, 559 Ratchathewi, Bangkok',
-    cost: '€963.43',
-    notes: 'Flights: 4 bags. Hotel: Booked, not yet paid. Dinner: Bubble Forest Cafe (Booked via klook, 300 THB vouchers).',
+    flights:
+      'Private minibus transfer from hotel to airport\nFlight from Koh Samui to Bangkok (BKK airport)\nFlight PG106: 08:45am-10:00am\nBangkok Airways\nPrivate minibus transfer from airport to hotel.',
+    accommodation: 'The Berkeley Hotel Pratunam, 559 Ratchathewi, Pratunam, Bangkok, Thailand, 1040',
+    cost: '€1,012.13',
+    notes:
+      'Flight €483.00. 4 cabin bags: 23 x 36 x 50 cm · Max weight 7 kg. 4 checked bags: Max weight 20 kg. 4 seats selected: 23A, 23B, 23C, 23D.\nHotel transfer to airport: Hoppa ref G2561395.\nAirport transfer to hotel: Hoppa ref G2561422 (€48.70).\nHotel €440.43 — booked, not yet paid. Family Bunk Bed Room. Breakfast included.\nBubble Forest Cafe dinner: Klook €40.00 (300 THB food/drink vouchers each).',
     baggage: [
       {
         airline: 'Bangkok Airways (Economy)',
@@ -150,35 +156,38 @@ export const defaultTripData: TripDay[] = [
       },
     ],
     itinerary:
-      '6:00-6:30 AM: Quick breakfast / grab-and-go from Nora Buri.\n6:30 AM: Grab from Nora Buri to Koh Samui Airport (USM), departing by 6:30 AM (~20-30 min, ~300-400 THB / €8-10 family). Pre-book the Grab the night before as island cars can be scarce early morning.\n7:15 AM: Arrive Samui Airport, check in & bag drop for PG106 (aim to be there ~90 min before the 08:45 departure).\n08:45-10:00 AM: Flight PG106 to Bangkok (Bangkok Airways).\n10:00 AM: Grab to hotel (~30-45 min, 150-200 THB / €4.11-€5.48)\n11:30 AM: Check in (early check-in likely available), freshen up\n1:00 PM: Lunch at hotel or nearby (Pratunam has excellent street food)\n3:00 PM: Pratunam Market exploration (literally steps from your hotel!) Browse vintage clothes, fake designer items, and general shopping. Negotiate prices. Use OneSiam discount card for 25% off Grab.\n18:00 PM: Dinner at Bubble Forest Cafe (Not using set menu).',
+      '05:32 AM: Pickup from Nora Buri; private minibus to Koh Samui airport (Hoppa ref G2561395).\n\n08:45-10:00 AM: Flight PG106 USM → BKK (Bangkok Airways).\n\n10:00 AM: Land Bangkok. Airport pickup; private minibus to hotel (Hoppa ref G2561422).\n\n11:30 AM: Check in (early check-in likely available), freshen up\n\n1:00 PM: Lunch at hotel or nearby (Pratunam has excellent street food)\n\n3:00 PM: Pratunam Market exploration (literally steps from your hotel!) Browse vintage clothes, fake designer items (belts, jerseys 300-800 THB / €8.22-€21.92), and general shopping. Negotiate prices by offering 50-65% of asking price. Bring cash for best prices.\n\nNote: use the OneSiam discount card (downloaded for free at https://mail.google.com/mail/u/0/#inbox/FMfcgzQgLXxjSVXTsgQFSKcLlBCnJzlb) to get 25% off Grab, and discounts on shopping and food.\n\n6:00 PM: Bubble Forest Cafe — booking (not using set menu).',
   },
   {
     date: 'Mon, July 13',
     location: 'Bangkok',
     flights: '',
-    accommodation: 'The Berkeley Hotel Pratunam',
+    accommodation: 'The Berkeley Hotel Pratunam, 559 Ratchathewi, Pratunam, Bangkok, Thailand, 1040',
     cost: '',
     notes: '',
     itinerary:
-      "9:00 AM: Hotel breakfast\n10:00 AM: Pop Mart at ICONSIAM (7th floor) World's largest Pop Mart Global Landmark Store. Standard blind boxes 300-800 THB; premium 800-2,000 THB. Expect 1-2 hour waits; arrive early.\n1:00 PM: ICONSIAM has extensive dining (Thai, international options)\n3:00 PM: Sephora shopping - Central World or ICONSIAM. CentralWorld is Bangkok's premier shopping mall.\n5:00 PM: BTS to King Power Mahanakhon (Chong Nonsi station, ~20-30 min from Pratunam) - head over early to beat the queue and lifts.\n5:45 PM: Mahanakhon SkyVerse - immersive digital art & multimedia experience on the way up to the deck. Then the 74th-floor indoor observation deck plus the 78th-floor open-air rooftop & Glass Tray (open daily ~10am-midnight). Settle in before sunset for the best light.\n6:49 PM: Sunset from the SkyWalk (sunset is ~6:49 PM that day); stay on for dusk and the city lights.\n8:00 PM: BTS back towards the hotel.\n8:30 PM: Dinner (consider upscale dining near hotel or casual Thai)",
+      '9:00 AM: Hotel breakfast\n\n10:00 AM: Pop Mart at ICONSIAM (7th floor) World\'s largest Pop Mart Global Landmark Store—perfect for collectible shopping! Standard blind boxes 300-800 THB (€8.22-€21.92); premium/limited edition 800-2,000 THB (€21.92-€54.79). Expect 1-2 hour waits; arrive early. Address: 299 Charoen Nakhon Rd. Grab from hotel ~20-30 min (100-150 THB / €2.74-€4.11).\n\n1:00 PM: ICONSIAM has extensive dining (Thai, international options)\n\n3:00 PM: Sephora shopping - Central World or ICONSIAM Browsing makeup and skincare. Pricing: Standard beauty products 1,000-1,500 THB (€27.40-€41.10); premium skincare 1,500-3,000 THB (€41.10-€82.19). Sephora in Bangkok typically 30-50% more expensive than US prices. CentralWorld is Bangkok\'s premier shopping mall (~15 min Grab from ICONSIAM, 100-150 THB / €2.74-€4.11).\n\n5:15 PM: Grab to King Power Mahanakhon (~10 min from CentralWorld, 80-120 THB / €2.19-€3.29)\n\n5:30-7:15 PM: Mahanakhon SkyWalk for sunset — rooftop observation deck and glass floor (King Power Mahanakhon, 114 Narathiwas Rd). Arrive before ~6:30 PM sunset. Tickets ~880-1,080 THB/adult (~€24-€30); book ahead if possible.\n\n7:30 PM: Dinner near Silom/Sathorn or Grab back to Pratunam (~15-20 min)',
   },
   {
     date: 'Tue, July 14',
     location: 'Bangkok',
     flights: '',
-    accommodation: 'The Berkeley Hotel Pratunam',
+    accommodation: 'The Berkeley Hotel Pratunam, 559 Ratchathewi, Pratunam, Bangkok, Thailand, 1040',
     cost: '',
-    notes: 'Anne: Wat Pho massage at 8 AM opening (register first — minimal wait vs 60–120 min at midday). Cash only. Tue = weekday, good for short queues.',
+    notes:
+      'Anne: Wat Pho massage at 8 AM opening (register first — minimal wait vs 60–120 min at midday). Cash only. Tue = weekday, good for short queues.',
     itinerary:
-      '6:45 AM: Quick breakfast at hotel (or grab-and-go — hotel restaurant may open later).\n7:00 AM: Grab to Wat Pho (~15–20 min from Pratunam).\n8:00 AM: Arrive Wat Pho at opening (temple & massage pavilion open 8:00 AM). Anne registers at the Wat Pho Thai Traditional Medical & Massage School pavilion immediately — before touring. Tip from TripAdvisor & travel forums: register first, get a numbered ticket, then explore while waiting if needed; at opening on a weekday (Tue) wait is often minimal or zero.\n8:15 AM - 9:15 AM: Anne — 1-hour traditional Thai massage (~520 THB / ~€14; 30 min 340 THB). Cash only. Wear loose modest clothing. Avoid 11 AM–2 PM peak queue (60–120+ min waits reported on TripAdvisor).\n9:15 AM - 10:30 AM: Wat Pho & Reclining Buddha (Temple of the Reclining Buddha). Admission ~300 THB. Early morning = quieter halls and better photos before tour groups arrive ~10 AM.\n10:45 AM: Walk to Grand Palace complex (~5 min).\n11:00 AM: Grand Palace & Wat Phra Kaew (Temple of the Emerald Buddha). Open until 3:30 PM; admission 500 THB. Dress modestly.\n12:30 PM: Lunch near Grand Palace area.\n2:00 PM: Grab back to hotel to rest (~15 min).\n4:00 PM onwards: Relax at hotel, pool, light dinner or evening stroll.\n8:30 PM: Early dinner or rest for next day.',
+      '6:45 AM: Quick breakfast at hotel (or grab-and-go — hotel restaurant may open later).\n\n7:00 AM: Grab to Wat Pho (~15–20 min from Pratunam).\n\n8:00 AM: Arrive Wat Pho at opening (temple & massage pavilion open 8:00 AM). Anne registers at the Wat Pho Thai Traditional Medical & Massage School pavilion immediately — before touring. Tip from TripAdvisor & travel forums: register first, get a numbered ticket, then explore while waiting if needed; at opening on a weekday (Tue) wait is often minimal or zero.\n\n8:15 AM - 9:15 AM: Anne — 1-hour traditional Thai massage (~520 THB / ~€14; 30 min 340 THB). Cash only. Wear loose modest clothing. Avoid 11 AM–2 PM peak queue (60–120+ min waits reported on TripAdvisor).\n\n9:15 AM - 10:30 AM: Wat Pho & Reclining Buddha (Temple of the Reclining Buddha). Admission ~300 THB. Early morning = quieter halls and better photos before tour groups arrive ~10 AM.\n\n10:45 AM: Walk to Grand Palace complex (~5 min).\n\n11:00 AM: Grand Palace & Wat Phra Kaew (Temple of the Emerald Buddha). Open until 3:30 PM; admission 500 THB. Dress modestly.\n\n12:30 PM: Lunch near Grand Palace area.\n\n2:00 PM: Grab back to hotel to rest (~15 min).\n\n4:00 PM onwards: Relax at hotel, pool, light dinner or evening stroll.\n\n8:30 PM: Early dinner or rest for next day.',
   },
   {
     date: 'Wed, July 15',
     location: 'Bangkok → Da Nang',
-    flights: 'Flight EK370 - 20:10-21:50. Emirates',
+    flights:
+      'Private transfer in minivan from hotel to airport\nFlight from Bangkok to Da Nang\nFlight EK370 - 20:10-21:50\nEmirates\nPrivate transfer in minivan from airport to hotel',
     accommodation: 'Peninsula Hotel Da Nang',
-    cost: '€800.76',
-    notes: 'Flights: Used airmiles towards this fare. Choose seats for free 48 hours before the flight. Hotel: Booked, but not yet paid. 2 rooms, breakfast included',
+    cost: '€813.03',
+    notes:
+      'Flight €208.62 — used airmiles towards this fare (saving €47). 4 cabin bags: 55 x 38 x 22cm · Max weight 7kg. 4 checked bags: Max weight 25kg. Choose seats for free 48 hours before the flight.\nHotel transfer to airport: Hoppa ref G2561422 (return transfer).\nAirport transfer to hotel: Hoppa ref G2561431 (€12.27).\nPeninsula Hotel €592.14 — booked, not yet paid. 2 rooms, breakfast included.',
     baggage: [
       {
         airline: 'Emirates (Economy)',
@@ -187,65 +196,70 @@ export const defaultTripData: TripDay[] = [
       },
     ],
     itinerary:
-      '8:00 AM: Hotel breakfast, pack up.\n9:00 AM: Check out of The Berkeley (checkout is 9 AM); store bags with the hotel for the day.\n9:30 AM: MBK Center (Mahboonkrong) - the famous fake goods mall. Takes 1.5-2 hours to explore.\n11:00 AM: Quick last-minute shopping at Terminal 21 or return to hotel. Easy MRT access.\n12:30 PM: Early lunch near hotel or airport area\n2:00 PM: Collect stored bags from the hotel.\n3:30 PM: Grab to Suvarnabhumi Airport (~45 min, 300-400 THB)\n8:10 PM: Depart for Da Nang\n12:30 AM onwards: Check in Peninsula Hotel Da Nang, rest',
+      '8:00 AM: Hotel breakfast\n\n9:00 AM: MBK Center (Mahboonkrong) - the famous fake goods mall Find fake jerseys (200-800 THB / €5.48-€21.92 after haggling), designer clothes, and high-quality replica bags (2,000-4,600 THB / €54.79-€126.03). Haggling strategy: Start at 65% of asking price. Floors 1-3 focus on clothing, shoes, bags. Takes 1.5-2 hours to explore. MBK is centrally located, ~15 min Grab from hotel (100-150 THB / €2.74-€4.11).\n\n11:00 AM: Quick last-minute shopping at Terminal 21 (Pop Mart or favorites) or return to hotel. Easy MRT access (~5 min from hotel, 15-20 THB / €0.41-€0.55).\n\n12:30 PM: Early lunch near hotel or airport area\n\n2:00 PM: Pack, check out\n\n4:35 PM: Pickup from hotel — private minivan to airport (Hoppa ref G2561422).\n\n8:10 PM: Flight EK370 depart Bangkok for Da Nang.\n\n9:50 PM: Land Da Nang. Airport pickup; private minivan to hotel (Hoppa ref G2561431).\n\n12:30 AM onwards: Check in Peninsula Hotel Da Nang, rest',
   },
   {
     date: 'Thu, July 16',
     location: 'Da Nang',
-    flights: '',
+    flights: 'Hotel Night 2',
     accommodation: 'Peninsula Hotel Da Nang',
     cost: '',
-    notes: '',
+    notes: 'Golden Bridge',
     itinerary:
-      "7:30 AM: Hotel breakfast.\n8:30 AM: Grab to Lady Buddha (Linh Ung Pagoda, Son Tra Peninsula) — 67m white statue with panoramic bay views (~20 min from hotel).\n9:00 AM - 10:30 AM: Lady Buddha & pagoda grounds.\n11:00 AM: Lunch near Son Tra or back towards the city.\n12:15 PM: Grab to Marble Mountains (~25 min).\n12:45 PM - 2:15 PM: Marble Mountains & Am Phu Cave — explore the cave system with Buddhist sculptures (~20-30 min cave tour).\n2:45 PM: Grab back to Da Nang city centre.\n4:00 PM: Dragon Bridge — walk the iconic bridge as the LED lights start to come on (no fire/water show tonight — that runs Fri-Sun at 9 PM).\n4:30 PM: Love Bridge (Cau Tinh Yeu) — colourful heart locks bridge, short walk from Dragon Bridge along the Han River.\n5:00 PM: Han Market — browse local produce, street food, and souvenirs.\n5:30 PM - 6:30 PM: Han River promenade walk — sunset is ~6:38 PM; watch the light change over the river and bridges.\n7:00 PM: Dinner nearby or back at Peninsula Hotel.",
+      '7:00 AM: Hotel breakfast\n\n10:45 AM: Grab to My Khe Beach (~15 min, ~150,000 VND / €6)\n\n11:00 AM - 12:30 PM: My Khe Beach – One of the world\'s most beautiful beaches with soft white sand and calm waters. Walk along the shoreline.\n\n12:30 PM: Lunch at beachside restaurant\n\n2:00 PM: Lady Buddha (Linh Ung Pagoda at Son Tra Peninsula) Perched on hillside 67 meters above ground with commanding sea views and city panoramas. Spiritual and photogenic location. ~45 min drive from beach. ~250,000 VND entry (~€10). This is one of Ken Abroad\'s recommended must-see spots for photography.\n\n4:00 PM: Return to Da Nang city center (~20 min)\n\n4:30 PM - 5:15 PM: Marble Mountains & Am Phu Cave Five limestone mountains symbolizing five elements (Earth, Water, Fire, Metal, Wood). Explore the cave system with Buddhist sculptures depicting heaven/hell scenes, complemented by light and sound effects. ~20-30 min cave tour (less strenuous than climbing full mountains). ~100,000 VND (~€4).\n\n5:30 PM - 6:30 PM: Local Market Exploration (Han Market or Con Market) Ken Abroad recommends experiencing authentic Da Nang beyond major tourist attractions. Browse local produce, street food, souvenirs. Immerse in Vietnamese daily life. Free entry.\n\n6:30 PM - 7:00 PM: Street Food & Vietnamese Egg Coffee – Grab street snacks at local cafes; visit local coffee shops (Vietnamese egg coffee ~40,000 VND / €1.60).\n\n7:00 PM - 7:45 PM: Riverfront Walk – Stroll Da Nang\'s riverside promenade, watch sunset over Han River. Free. ~45 min.\n\n8:00 PM: Return to hotel, rest/pool time\n\n8:30 PM: Dinner at Peninsula Hotel restaurant or explore local dining district',
   },
   {
     date: 'Fri, July 17',
     location: 'Da Nang',
-    flights: '',
+    flights:
+      'Private car transfer from hotel to Sun World Ba Na Hills with Minh Vu Travel\nHotel Night 3',
     accommodation: 'Peninsula Hotel Da Nang',
-    cost: '',
-    notes: 'Activities: Golden Bridge photography; Solar Castle (Pop Mart flagship at Ba Na Hills).',
+    cost: '€13.19',
+    notes:
+      'Booked and paid for through Minh Vu Travel.\nActivities: \nSolar Castle (Pop Mart Flagship at Ba Na Hills) 3:00–4:30 PM; \nGolden Bridge photography before tour crowds.',
     itinerary:
-      "7:15 AM: Early breakfast at hotel (get to Golden Bridge before tour crowds arrive)\n8:00 AM: Depart for Ba Na Hills/Sun World via private car/taxi (~40-50 min from Da Nang, ~800,000 VND).\n9:00 AM: Arrive Sun World Ba Na Hills - Cable Car ascent (Hoi An 05 ground station).\n10:00 AM: Golden Bridge: Early morning before peak crowds. Perfect for Instagram/memory shots. Spend 30-45 min.\n11:00 AM: Explore Middle Level attractions: Flower Gardens, Linh Ung Pagoda, Wine Cellar.\n1:00 PM: Lunch at Ba Na Hills Restaurant (Buffet included with ticket)\n2:00 PM: Fantasy Park (included with Ba Na Hills ticket). Dinosaur Park, Roller Coaster, Arcade games, Wax Museum.\n3:00 PM - 4:30 PM: Solar Castle (Pop Mart Flagship at Ba Na Hills). World's largest Pop Mart store. Allow 1.5-2 hours.\n4:30 PM: Explore French Village at Morin Station\n5:30 PM: Cable car descent back to ground level\n6:30 PM: Return to Da Nang via taxi\n7:15 PM: Quick dinner at hotel or nearby restaurant.\n8:15 PM: Walk/Grab to Dragon Bridge, aiming to arrive by ~8:30 PM to secure a good viewing spot near the dragon's head (it gets very crowded and the bridge closes to traffic shortly before the show).\n9:00 PM - 9:15 PM: Dragon Bridge Fire & Water Show (runs Fri-Sun at 9 PM sharp; today is Friday). Iconic bridge breathes fire then sprays water (~15 min).\n9:30 PM: Return to hotel, rest",
+      '7:00 AM pickup booked from the hotel in a 6/7-seater MPV, to beat the crowds for the cable car and get good photos of the Golden Bridge without too many people.\n\n7:15 AM: Early breakfast at hotel (get to Golden Bridge before tour crowds arrive)\n\n9:00 AM: Arrive Sun World Ba Na Hills - Cable Car ascent Take the Hoi An (05) ground station cable car—CNN-ranked among 10 most impressive cable-car systems in the world. 360-degree mountain views; on clear days see Da Nang and the sea. Full-day ticket includes all attractions. ~500,000 VND (~€20) adults; children discounts available.\n\n10:00 AM: Golden Bridge: Early morning (you\'ll be here by 10 AM—before peak crowds 11 AM-3 PM). Perfect for Instagram/memory shots. Spend 30-45 min for photos and exploration.\n\n11:00 AM: Explore Middle Level attractions while crowds build downstairs:\nFlower Gardens – Picturesque botanical gardens, great for photo ops\nLinh Ung Pagoda – Golden Buddhist pagoda with cultural significance\nWine Cellar – Unique underground attraction\n\n1:00 PM: Lunch at Ba Na Hills Restaurant (Buffet included with ticket)\n\n2:00 PM: Fantasy Park (included with Ba Na Hills ticket) Perfect for younger visitors:\nDinosaur Park – Interactive museum with dinosaurs\nRoller Coaster – Alpine Coaster ride (thrilling but not extreme)\nArcade games – 90+ free games\nJurassic Park – Adventure zone\nWax Museum – 40+ celebrity wax statues\n\n3:00-4:30 PM: Solar Castle (Pop Mart Flagship at Ba Na Hills) — world\'s largest Pop Mart store. Standard blind boxes ~150,000-400,000 VND (€6-€16); premium/limited editions ~400,000-1,000,000 VND (€16-€40). Allow 1.5-2 hours for proper browsing.\n\n4:30 PM: Explore French Village at Morin Station – European-style architecture, charming photo spots\n\n5:30 PM: Cable car descent back to ground level (spectacular sunset views possible)\n\n6:30 PM: Return to Da Nang via taxi (~50 min, ~800,000 VND / €32)\n\n7:30 PM: Quick dinner at hotel or nearby restaurant (~30 min)\n\n8:30 PM onwards: EARLY REST – Retire to hotel to rest before Dragon Bridge evening show. Critical rest period after 12-hour day.\n\n9:00 PM - 9:45 PM: Dragon Bridge Fire & Water Show Walk/Grab to Dragon Bridge (Cầu Rồng) located in Da Nang city center (~10 min from most locations). The iconic bridge breathes fire and sprays water during evening shows (typically 9 PM and 10 PM nightly). Spectacular nighttime photography opportunity with bridge illuminated. Free to view from bridge/riverbank. The fire breathing is most dramatic and best framed from the north side of the bridge.\n\n10:00 PM: Return to hotel, rest',
   },
   {
     date: 'Sat, July 18',
     location: 'Hoi An',
-    flights: '45-min taxi transfer from Da Nang to Hoi An',
+    flights: '45-min private transfer from Da Nang to Hoi An with Minh Vu Travel',
     accommodation: 'Little Hoi An. A Boutique Hotel & Spa',
-    cost: '€420.14',
-    notes: 'David: Suit fitting at La Vang Golden Leaf Tailor Shop (441 Cua Dai St — Grab ~5 min from hotel; ask for Autumn).',
+    cost: '€437.43',
+    notes:
+      'Transfer booked and paid for 16-seater van (Minh Vu Travel, €17.29).\nHotel booked and paid with Revolut Stays (€420.14).\nDavid: Suit fitting at La Vang Golden Leaf Tailor Shop (441 Cua Dai St — Grab ~5 min from hotel; ask for Autumn).',
     itinerary:
-      '7:30 AM: Hotel breakfast at Peninsula Da Nang, check out & store bags if needed.\n8:00 AM: Grab to My Khe Beach (~15 min).\n8:30 AM - 10:30 AM: My Khe Beach — morning swim and walk along the shoreline before heading to Hoi An.\n10:45 AM: Grab back to hotel, collect bags.\n12:00 PM: Depart Da Nang via 45-min taxi transfer to Hoi An (~200,000 VND / €8)\n1:00 PM: Arrive Little Hoi An. A Boutique Hotel & Spa, check in, freshen up\n2:00 PM: Lunch at hotel or nearby\n3:00 PM - 4:30 PM: La Vang Golden Leaf Tailor Shop (441 Cua Dai St, near Cua Dai Beach — Grab ~5 min) — David\'s suit consultation, fabric selection & measurements with Autumn. Allow 2–3 days for 2 fittings; 24–48 hr turnaround typical (est. €110–€220 / $120–$240 for quality wool 2-piece; 3-piece ~€140–€280).\n5:00 PM: Hoi An Ancient Town exploration. Stroll through: Japanese Covered Bridge, yellow buildings, local markets, shophouses.\n6:00 PM: Sunset photography walk along the riverside.\n7:30 PM: Dinner at hotel or local restaurant',
+      '7:30 AM: Hotel breakfast at Peninsula Da Nang, check out & store bags if needed.\n\n8:00 AM: Grab to My Khe Beach (~15 min).\n\n8:30 AM - 10:30 AM: My Khe Beach — morning swim and walk along the shoreline before heading to Hoi An.\n\n10:45 AM: Grab back to hotel, collect bags.\n\n12:00 PM: Pickup from Da Nang hotel — private transfer to Hoi An (~45 min, Minh Vu Travel).\n\n1:00 PM: Arrive Little Hoi An. A Boutique Hotel & Spa, check in, freshen up\n\n2:00 PM: Lunch at hotel or nearby\n\n3:00 PM - 4:30 PM: La Vang Golden Leaf Tailor Shop (441 Cua Dai St, near Cua Dai Beach — Grab ~5 min) — David\'s suit consultation, fabric selection & measurements with Autumn. Allow 2–3 days for 2 fittings; 24–48 hr turnaround typical (est. €110–€220 for quality wool 2-piece; 3-piece ~€140–€280).\n\n5:00 PM: Hoi An Ancient Town exploration. Stroll through: Japanese Covered Bridge, yellow buildings, local markets, shophouses.\n\n6:00 PM: Sunset photography walk along the riverside.\n\n7:30 PM: Dinner at hotel or local restaurant',
   },
   {
     date: 'Sun, July 19',
     location: 'Hoi An',
-    flights: '',
+    flights: 'Hotel Night 2',
     accommodation: 'Little Hoi An. A Boutique Hotel & Spa',
     cost: '',
-    notes: '',
+    notes: 'Hoi An Ancient Town',
     itinerary:
-      "6:00 AM: Sunrise Photography Tour (early departure for best light). Photograph golden fishing nets, local morning market, riverside charm.\n8:30 AM: Vietnamese breakfast & aromatic coffee at market cafe (~50,000 VND / €2)\n9:30 AM: Return to hotel, rest/shower\n10:30 AM - 11:30 AM: La Vang Golden Leaf Tailor Shop — David's first suit fitting (alterations from yesterday's measurements).\n12:00 PM: Hoi An Ancient Town (Full Exploration). UNESCO World Heritage Site. Japanese Bridge, Assembly Halls, Old Houses, Incense Hall, Hidden corners, Hoi An Market.\n12:30 PM: Lunch at local restaurant – Cao lau or White Rose dumplings\n2:00 PM: Continue Ancient Town exploration or visit specialty shops: Fabric & Lantern Shops, Art galleries, Coffee shops.\n4:00 PM: Return to hotel, rest/pool time\n6:30 PM: Blue Hour Photography Walk (sunset to twilight). Magical 'lantern light' hour.\n7:30 PM: Dinner at riverside restaurant for evening ambiance",
+      '6:00 AM: Sunrise Photography Tour (early departure for best light) Hire professional guide (~€40-60 family) or go independently. Early morning (6:00-7:30 AM) offers soft light without crowds.\nPhotograph golden fishing nets – iconic Hoi An riverside feature\nLocal morning market – vibrant atmosphere, friendly vendors, Vietnamese breakfast\nRiverside charm – fishermen with nets, traditional boats\n\n8:30 AM: Vietnamese breakfast & aromatic coffee at market cafe (~50,000 VND / €2)\n\n9:30 AM: Return to hotel, rest/shower\n\n10:30 AM - 11:30 AM: La Vang Golden Leaf Tailor Shop — David\'s first suit fitting (alterations from yesterday\'s measurements).\n\n12:00 PM: Hoi An Ancient Town (Full Exploration) UNESCO World Heritage Site dating to 15th century. Perfect photography day in daylight.\nJapanese Bridge – architectural marvel with views\nAssembly Halls – historic gathering places with intricate details\nOld Houses – 18th-century merchant homes showcasing period architecture\nIncense Hall – Buddhist temple with massive incense coils creating spiral patterns (photograph from above for best composition)\nHidden corners – small alleyways with colorful doorways, lanterns\nHoi An Market – local produce, seafood, textiles\n\n12:30 PM: Lunch at local restaurant – Cao lau (Hoi An specialty noodle dish, ~80,000 VND / €3.20) or White Rose dumplings (~100,000 VND / €4)\n\n2:00 PM: Continue Ancient Town exploration or visit specialty shops:\nFabric & Lantern Shops – browse textile options for tailoring projects\nArt galleries – local artwork, prints\nCoffee shops – experience traditional Vietnamese egg coffee (~40,000 VND / €1.60)\n\n4:00 PM: Return to hotel, rest/pool time\n\n6:30 PM: Blue Hour Photography Walk (sunset to twilight, ~30-45 min before full darkness) This is the magical "lantern light" hour. \nNote: Evening (7-9 PM) becomes extremely crowded with tourists during full moon festival, but less so on regular days.\n\n7:30 PM: Dinner at riverside restaurant for evening ambiance',
   },
   {
     date: 'Mon, July 20',
     location: 'Hoi An',
-    flights: '',
+    flights: 'Hotel Night 3',
     accommodation: 'Little Hoi An. A Boutique Hotel & Spa',
     cost: '',
-    notes: 'David: La Vang Golden Leaf final fitting & suit pickup. Cam Thanh basket boat; lantern photography.',
+    notes: 'David: La Vang Golden Leaf final fitting & suit pickup.\nCam Thanh basket boat tour; lantern photography at blue hour in the Ancient Town.',
     itinerary:
-      '8:00 AM: Hotel breakfast\n9:00 AM - 10:00 AM: La Vang Golden Leaf Tailor Shop — David\'s second (final) suit fitting & pickup.\n10:30 AM - 12:00 PM: Cam Thanh Basket Boat Tour. Transfer from hotel. Bamboo Basket Boat ride through Cam Thanh River & Bay Mau Coconut Forest.\n12:00 PM: Lunch at local restaurant near Cua Dai / tailoring shop\n2:00 PM - 5:00 PM: Pool / rest at hotel or optional return to Ancient Town.\n5:30 PM: Return to hotel, freshen up\n7:00 PM: Early dinner or rest\n8:00 PM: Evening – LANTERN PHOTOGRAPHY AT ANCIENT TOWN\n9:00 PM: Return to hotel, pack for Tuesday departure',
+      '8:00 AM: Hotel breakfast\n\n9:00 AM - 10:00 AM: La Vang Golden Leaf Tailor Shop — David\'s second (final) suit fitting & pickup.\n\n12:00 PM: Lunch at local restaurant near tailoring shop\n\n2:00 PM - 5:00 PM: Cam Thanh Basket Boat Tour\n\nTransfer from hotel to Cam Thanh Fishing Village (~15 min drive, included in tour)\n\nTour Highlights:\nWelcome at local fisherman\'s family house; learn about their daily life\nBamboo Basket Boat ride through Cam Thanh River & Bay Mau Coconut Forest\nNavigate small canals of mangrove forest & coconut palms\nLearn traditional fishing techniques – watching fishermen, trying to cast nets\nPaddling experience – try rowing the basket boat yourself\nBasket boat race – competitive paddling fun\nCatch fish/crabs – use simple traditional tools\nWelcome drink at fisherman\'s house (~free coconut drink)\nLunch – local food included (~12:00 PM or after tour)\nCost: ~€12-18 per person family rate; GetYourGuide/Klook offers discounts\n\n5:30 PM: Return to hotel, freshen up\n\n7:00 PM: Early dinner or rest\n\n8:00 PM: Evening – LANTERN PHOTOGRAPHY AT ANCIENT TOWN\n\nReturn to hotel by 9:00 PM, pack for Tuesday departure',
   },
   {
     date: 'Tue, July 21',
     location: 'Hanoi',
-    flights: 'Flight from Da Nang to Hanoi. 11:35-13:00. Terminal 1. 4x 10kg hand luggage, 4x 23kg checked.',
+    flights:
+      'Private minivan transfer to airport\nFlight from Da Nang to Hanoi\nPrivate minivan transfer from airport',
     accommodation: 'Peridot Grand Luxury Boutique Hotel',
-    cost: '€512.50',
-    notes: 'Flights & Hotel Booked and paid. Breakfast included. Anne: head spa at NonLa Healing Spa (book Combo 2 online).',
+    cost: '€545.22',
+    notes:
+      'Hotel transfer to airport: Hoppa ref G2561557 (€15.90). 7:50 AM pickup from hotel.\nFlight €275.00 — booked and paid. 11:35-13:00, Terminal 1.\nAirport transfer to hotel: Hoppa ref G2561839 (€16.82). 1 PM pickup from airport.\nPeridot Grand €237.50 — booked and paid on Revolut Stays. Breakfast included.\nAnne: head spa at NonLa Healing Spa (book Combo 2 online).',
     baggage: [
       {
         airline: 'Vietnam Airlines (DAD → HAN)',
@@ -254,22 +268,22 @@ export const defaultTripData: TripDay[] = [
       },
     ],
     itinerary:
-      '7:00 AM: Check out Little Hoi An, taxi to Da Nang Airport (~45 min, ~400,000 VND / €15).\n9:00 AM: Arrive Da Nang Airport, check in for VN flight (aim ~90 min before 11:35 departure).\n11:35 AM - 1:00 PM: Flight from Da Nang to Hanoi (Terminal 1).\n1:30 PM: Grab to Peridot Grand Luxury Boutique Hotel, 33 Duong Thanh (~40 min from Noi Bai).\n2:30 PM: Check in, freshen up.\n3:30 PM - 5:30 PM: Anne — NonLa Healing Spa (21 Thuoc Bac, Old Quarter — ~8 min walk from hotel). Combo 2 head spa: relaxing herbal hair wash, avocado hair mask & neck/shoulder/nape massage (~90 min, 650,000 VND / ~€24). Japanese-style scalp treatment; book at nonlahealingspa.com or WhatsApp +84 98 992 6189. Open 10 AM–10 PM.\n6:00 PM: Light dinner near hotel or short Old Quarter stroll.\nEarly night — Halong Bay cruise transfer tomorrow.',
+      '7:50 AM: Pickup from Hoi An hotel — private minivan to Da Nang airport (Hoppa ref G2561557).\n\n11:35 AM-1:00 PM: Flight DAD → HAN (Vietnam Airlines, Terminal 1). 4× 10kg hand luggage; 4× 23kg checked luggage.\n\n1:00 PM: Land Hanoi. Airport pickup; private minivan to hotel (Hoppa ref G2561839).\n\n2:30 PM: Check in Peridot Grand Luxury Boutique Hotel, freshen up.\n\n3:30 PM - 5:30 PM: Anne — NonLa Healing Spa (21 Thuoc Bac, Old Quarter — ~8 min walk from hotel). Combo 2 head spa: relaxing herbal hair wash, avocado hair mask & neck/shoulder/nape massage (~90 min, 650,000 VND / ~€24). Japanese-style scalp treatment; book at nonlahealingspa.com or WhatsApp +84 98 992 6189. Open 10 AM–10 PM.\n\n6:00 PM: Light dinner near hotel or short Old Quarter stroll.\n\nEarly night — Halong Bay cruise transfer tomorrow.',
   },
   {
     date: 'Wed, July 22',
     location: 'Halong Bay',
-    flights: 'Transfer from Hanoi to Halong Bay (arrange separately — not listed in cruise booking notes)',
+    flights: 'Transfer from Hanoi to Halong Bay (to be booked)',
     accommodation: 'Azura Cruise Halong Bay',
     cost: '€1,197.00',
-    notes: 'Azura Cruise 3D2N Lan Ha Bay. Booked & paid — includes all meals, not drinks. Hanoi→marina transfer NOT confirmed in your notes; meet at Tuan Chau by ~11:30 AM or book car/limousine.',
+    notes: 'Azura Cruise 3D2N Lan Ha Bay. Cruise booked and paid — includes all meals, not drinks. Transfers to be booked.',
     itinerary:
-      'Morning: Transfer from Peridot Grand, 33 Duong Thanh to Tuan Chau Marina (~3 hr / ~170 km). Not included in your booking notes — options: private car/limousine (~$65 USD / ~€60 one way, ~3 hrs) or ask Azura to add shuttle pick-up. If self-driving: aim for Lot 38 / Waiting Lounge 038, Tuan Chau International Marina by 11:30–11:45 AM.\n11:30 AM: Arrive Tuan Chau Wharf; speedboat tender to Azura Cruise.\n12:30–12:45 PM: Check-in — welcome drink, cold towel, safety briefing, cabin keys.\n1:00 PM: Lunch in onboard restaurant (included — Vietnamese–Western fusion buffet/set menu; fresh seafood) while cruising Halong Bay into Lan Ha Bay.\n2:30–4:30 PM: Ao Ech Lagoon (Frog Pond) — choose swimming in open sea or floating pool, panoramic deck pool, or kayaking in calm lagoon (all included; life vests provided).\n5:30–6:30 PM: Sunset party on sundeck — complimentary hot tea, jacuzzi, sunbathing & photos. Happy Hour at bar: buy 2 drinks, get 1 free (drinks not included in fare).\n6:15 PM: Vietnamese cooking class with ship chef (included).\n7:15 PM: Dinner in restaurant (included — multi-course Asian–European fusion; vegetarian options on request).\n8:45 PM: Evening free time — karaoke, live music, night squid fishing (included), open-air bar (drinks paid), onboard spa/sauna (paid — book with Cruise Manager), movie, or relax in cabin.\nOvernight anchored on Lan Ha Bay. Free: Wi-Fi, gym, panoramic pool.',
+      'Morning: Transfer from Peridot Grand, 33 Duong Thanh to Tuan Chau Marina (~3 hr / ~170 km). Transfers to be booked — aim for Lot 38 / Waiting Lounge 038, Tuan Chau International Marina by 11:30–11:45 AM.\n11:30 AM: Arrive Tuan Chau Wharf; speedboat tender to Azura Cruise.\n12:30–12:45 PM: Check-in — welcome drink, cold towel, safety briefing, cabin keys.\n1:00 PM: Lunch in onboard restaurant (included — Vietnamese–Western fusion buffet/set menu; fresh seafood) while cruising Halong Bay into Lan Ha Bay.\n2:30–4:30 PM: Ao Ech Lagoon (Frog Pond) — choose swimming in open sea or floating pool, panoramic deck pool, or kayaking in calm lagoon (all included; life vests provided).\n5:30–6:30 PM: Sunset party on sundeck — complimentary hot tea, jacuzzi, sunbathing & photos. Happy Hour at bar: buy 2 drinks, get 1 free (drinks not included in fare).\n6:15 PM: Vietnamese cooking class with ship chef (included).\n7:15 PM: Dinner in restaurant (included — multi-course Asian–European fusion; vegetarian options on request).\n8:45 PM: Evening free time — karaoke, live music, night squid fishing (included), open-air bar (drinks paid), onboard spa/sauna (paid — book with Cruise Manager), movie, or relax in cabin.\nOvernight anchored on Lan Ha Bay. Free: Wi-Fi, gym, panoramic pool.',
   },
   {
     date: 'Thu, July 23',
     location: 'Ha Long Bay',
-    flights: '',
+    flights: 'Cruise Night 2',
     accommodation: 'Azura Cruise Halong Bay',
     cost: '',
     notes: 'Meals included today: breakfast buffet + lunch + dinner. Drinks not included. Bring cash & comfortable shoes for Viet Hai cycling; swimwear for Ba Trai Dao.',
@@ -279,38 +293,38 @@ export const defaultTripData: TripDay[] = [
   {
     date: 'Fri, July 24',
     location: 'Hanoi',
-    flights: 'Transfer from Halong Bay to Hanoi (arrange separately — not listed in cruise booking notes)',
+    flights: 'Transfer from Halong Bay to Hanoi (to be booked)',
     accommodation: 'Proverb Hotel',
     cost: '€402.47',
-    notes: 'Booked and paid for. Includes breakfast at Proverb. Final cruise morning then transfer to Hanoi — return shuttle not confirmed in your notes; private car ~$65 / ~€60 to Proverb Hotel, 21 Bat Su St.',
+    notes: 'Booked and paid for. Includes breakfast at Proverb. Transfers to be booked.',
     itinerary:
-      '6:30 AM: Tai Chi on sundeck or sunrise photography from top deck / gym.\n7:00–7:30 AM: Light breakfast in restaurant (included).\n7:30–8:30 AM: Dark & Bright Cave (Sang Toi Cave) — kayak on your own or bamboo boat with local rower (included).\n9:30 AM: Check out of cabin; settle any drink/spa bills.\n9:30–9:45 AM: Brunch in restaurant while Azura sails back to Tuan Chau Marina (included).\n10:30–10:45 AM: Tender speedboat from Azura to Tuan Chau pier.\n11:15 AM: Disembark — arrive Lot 38 / Waiting Lounge 038, Tuan Chau International Marina, Tuan Chau Island. Tour guide assists with luggage.\n11:45 AM–12:00 PM: Arrange return transfer to Hanoi (not in your booking notes — book private car/limousine with cruise staff at disembarkation, or pre-book; ~2.5–3 hrs to Old Quarter).\n12:00–3:00 PM: Drive to Hanoi via expressway (~170 km). Drop-off Proverb Hotel, 21 Bat Su Street, Hoan Kiem (~3:00 PM if departing marina ~12:00 PM).\n3:00–4:00 PM: Arrive Proverb Hotel; check in when room ready (official check-in often from 2 PM). Freshen up.\n5:00 PM: Old Quarter Walking Tour (self-guided or hire guide). Explore: Narrow alleyways – 36 Streets of Hanoi. St Joseph\'s Cathedral. Street food tasting.\n6:30 PM: Hoan Kiem Lake sunset walk. Perfect photography light during golden hour.\n7:30 PM: Dinner – Traditional Vietnamese restaurant in Old Quarter.\n8:30 PM: Return to hotel, rest',
+      '6:30 AM: Tai Chi on sundeck or sunrise photography from top deck / gym.\n7:00–7:30 AM: Light breakfast in restaurant (included).\n7:30–8:30 AM: Dark & Bright Cave (Sang Toi Cave) — kayak on your own or bamboo boat with local rower (included).\n9:30 AM: Check out of cabin; settle any drink/spa bills.\n9:30–9:45 AM: Brunch in restaurant while Azura sails back to Tuan Chau Marina (included).\n10:30–10:45 AM: Tender speedboat from Azura to Tuan Chau pier.\n11:15 AM: Disembark — arrive Lot 38 / Waiting Lounge 038, Tuan Chau International Marina, Tuan Chau Island. Tour guide assists with luggage.\n11:45 AM–12:00 PM: Transfer to Hanoi — to be booked (~2.5–3 hrs to Proverb Hotel, 21 Bat Su St, Hoan Kiem).\n12:00–3:00 PM: Drive to Hanoi via expressway (~170 km).\n3:00–4:00 PM: Arrive Proverb Hotel; check in when room ready (official check-in often from 2 PM). Freshen up.\n\n5:00 PM: Old Quarter Walking Tour (self-guided or hire guide ~€15-20) Explore:\n\nNarrow alleyways – 36 Streets of Hanoi, each traditionally dedicated to one trade\n\nSt Joseph\'s Cathedral – Iconic Gothic cathedral (exterior photography)\n\nVietnamese Women\'s Museum – Cultural insight (if time permits; may save for tomorrow)\n\nStreet food tasting – Grab local snacks (pho, banh mi, spring rolls) ~50,000-100,000 VND (~€2-4)\n\n6:30 PM: Hoan Kiem Lake sunset walk Beautiful lakeside park with locals exercising, feeding turtles. Perfect photography light during golden hour. Free entry. ~30-45 min stroll.\n\n7:30 PM: Dinner – Traditional Vietnamese restaurant in Old Quarter (~150,000-200,000 VND / €6-8 per person)\n\n8:30 PM: Return to hotel, rest',
   },
   {
     date: 'Sat, July 25',
     location: 'Hanoi',
-    flights: '',
-    accommodation: 'Proverb Hotel',
-    cost: '',
-    notes: 'Train Street, Water Puppets & Culture',
-    itinerary:
-      "6:30 AM: Early Breakfast at hotel\n7:30 AM - 9:00 AM: Hanoi Train Street Photography Located at 224 Lê Duẩn in the Old Quarter. Morning visiting offers fewer crowds.\n9:30 AM: Vietnamese Egg Coffee & Pastry Breakfast.\n10:30 AM - 12:00 PM: Temple of Literature Vietnam's first university.\n12:30 PM: Lunch – Local pho or specialty noodle dish.\n2:00 PM - 3:00 PM: Rest at hotel or optional Hoa Lo Prison (Hanoi Hilton) Museum.\n3:30 PM: Tran Quoc Pagoda Vietnam's oldest pagoda, lakeside setting on Truc Bach Lake.\n4:00 PM - 5:00 PM: Truc Bach Lake Walk & Photography.\n5:30 PM: Return to Old Quarter\n6:00 PM - 6:30 PM: Rest at hotel, freshen up\n6:30 PM - 7:15 PM: Pre-show Dinner near Thang Long Water Puppet Theatre\n7:30 PM - 8:15 PM: Thang Long Water Puppet Theatre. Traditional Vietnamese art form on water stage.\n8:30 PM: Post-show Dinner – Return to Old Quarter.\n9:30 PM: Return to hotel, rest",
-  },
-  {
-    date: 'Sun, July 26',
-    location: 'Hanoi',
-    flights: '',
+    flights: 'Hotel Night 2',
     accommodation: 'Proverb Hotel',
     cost: '',
     notes: '',
     itinerary:
-      '8:00 AM: Hotel breakfast\n9:00 AM - 11:00 AM: Hoan Kiem Lake Extended Visit Perfect golden morning light. Ngoc Son Temple, Turtle Tower, Café stops.\n11:00 AM - 12:30 PM: Hanoi Shopping & Browsing. Old Quarter markets, Maison Marou, Street art galleries.\n12:30 PM: Lunch – Try Michelin-recommended restaurant or casual local eatery.\n2:00 PM - 4:30 PM: Extended Truc Bach Lake Afternoon & Photography Session.\n4:30 PM - 5:30 PM: Return to hotel, rest & freshen up\n5:30 PM: Final Evening Walk – Catch sunset light on yellow buildings and alleyways.\n7:00 PM: Farewell Dinner – Upscale Vietnamese restaurant or hotel dining\n8:30 PM: Return to hotel, pack for Monday departure',
+      'Train Street, Water Puppets & Culture):\n\n6:30 AM: Early Breakfast at hotel (6:30-7 AM optimal)\n\n7:30 AM - 9:00 AM: Hanoi Train Street Photography Located at 224 Lê Duẩn in the Old Quarter (near many hotels) - Train timing: Trains typically pass around 3:00 PM and 7:00 PM, but morning visiting offers fewer crowds and can capture residents opening shops, sweeping streets, local morning life.\n\n9:30 AM: Vietnamese Egg Coffee & Pastry Breakfast Visit legendary café (Giang Café or similar ~40,000 VND / €1.60). Vietnamese egg coffee is a signature experience.\n\n10:30 AM - 12:00 PM: Temple of Literature Vietnam\'s first university (founded 1070). - What to see: Beautiful courtyards, ancient pagodas, stone turtle statues (symbolize longevity), scholarly atmosphere - Admission: ~30,000 VND (~€1.20). Note: Less crowded in morning before peak tourist hours\n\n12:30 PM: Lunch – Local pho or specialty noodle dish (~80,000-120,000 VND / €3.20-4.80 per person)\n\n2:00 PM - 3:00 PM: Rest at hotel or optional Hoa Lo Prison (Hanoi Hilton) Museum - Historical war site, sobering but educational - Admission ~30,000 VND (~€1.20)\n\n3:30 PM: Tran Quoc Pagoda Vietnam\'s oldest pagoda (built 545 AD), lakeside setting on Truc Bach Lake. - Admission: Free Travel: ~15 min from Old Quarter by Grab (~50,000 VND / €2)\n\n4:00 PM - 5:00 PM: Truc Bach Lake Walk & Photography Gorgeous lakeside area, locals exercising, specialty coffee shops, swan boat rides available (~50,000 VND / €2 per person). Visit oldest ice cream shop in Hanoi nearby. Perfect photo spot with golden hour light.\n\n5:30 PM: Return to Old Quarter\n\n6:00 PM - 6:30 PM: Rest at hotel, freshen up\n\n6:30 PM - 7:15 PM: Pre-show Dinner near Thang Long Water Puppet Theatre\n\n7:30 PM - 8:15 PM (or alternative show time): Thang Long Water Puppet Theatre\n\nLocation: Beside Hoan Kiem Lake in Old Quarter (57B Dinh Tien Hoang Street)\n\nWhat to expect: Traditional Vietnamese art form. Wooden puppets controlled via bamboo canes perform stories of local legends, folk tales, Vietnamese myths on water stage. Live traditional music accompanies performances. Fireworks & special effects. 50-minute show. - Ticket price: ~100,000-150,000 VND per person (~€4-6); audio guides available (~10,000 VND / €0.40 extra)\nShow times: Multiple performances daily (typically 2:30 PM, 4:00 PM, 5:30 PM, 7:00 PM). Evening shows are most popular.\n\n8:30 PM: Post-show Dinner – Return to Old Quarter for late dinner or dessert. Visit Trang Tien ice cream shop (famous Hanoi ice cream ~20,000 VND / €0.80)\n\n9:30 PM: Return to hotel, rest',
+  },
+  {
+    date: 'Sun, July 26',
+    location: 'Hanoi',
+    flights: 'Hotel Night 3',
+    accommodation: 'Proverb Hotel',
+    cost: '',
+    notes: '',
+    itinerary:
+      '8:00 AM: Hotel breakfast\n\n9:00 AM - 11:00 AM: Hoan Kiem Lake Extended Visit Perfect golden morning light. Full lake exploration with options:\nNgoc Son Temple – Small temple on tiny island (accessible via red bridge); serene, photogenic\nTurtle Tower – Historic structure in middle of lake; photograph from lakeside\nCafé stops – Waterfront cafés for Vietnamese coffee (~30,000 VND / €1.20)\n\n11:00 AM - 12:30 PM: Hanoi Shopping & Browsing\nOld Quarter markets – Local crafts, silk scarves, lanterns, souvenirs\nMaison Marou (famous chocolate shop) – Browse, grab coffee/pastry\nStreet art galleries – Local art shops\n\n12:30 PM: Lunch – Try Michelin-recommended restaurant or casual local eatery (~150,000-250,000 VND / €6-10 per person)\n\n2:00 PM - 4:30 PM: Extended Truc Bach Lake Afternoon & Photography Session\nReturn to Truc Bach Lake for afternoon light (different from morning; more dramatic shadows and reflections)\nExtended swan boat rides – ~1 hour paddling; allow plenty of time for photography from water\nWaterside café time – Sit, observe, photograph: fishermen casting nets, water vendors, traditional boats\n\n4:30 PM - 5:30 PM: Return to hotel, rest & freshen up\n\n5:30 PM: Final Evening Walk – Different Old Quarter Area – Catch sunset light on yellow buildings and alleyways. \n\n7:00 PM: Farewell Dinner – Upscale Vietnamese restaurant or hotel dining\n\n8:30 PM: Return to hotel, pack for Monday departure',
   },
   {
     date: 'Mon, July 27',
     location: 'Departure',
-    flights: 'VN162: DAD → HAN. QR977: Depart HAN (19:30). Qatar Airways',
-    accommodation: 'Flight',
+    flights: 'VN162: DAD → HAN. QR977: Depart HAN (19:30)\nQatar Airways',
+    accommodation: 'flight',
     cost: '',
     notes: 'Extra leg room for 2nd leg.',
     baggage: [
@@ -325,12 +339,13 @@ export const defaultTripData: TripDay[] = [
         carryOn: '7kg (1 piece, max 50x37x25cm) + 1 personal item',
       },
     ],
-    itinerary: '',
+    itinerary:
+      '',
   },
   {
     date: 'Tue, July 28',
     location: 'Dublin',
-    flights: 'QR19: DOH → DUB (01:15 - 06:45). Qatar Airways',
+    flights: 'QR19: DOH → DUB (01:15 - 06:45)\nQatar Airways',
     accommodation: 'Home',
     cost: '',
     notes: 'Flight Details: Arrive in Dublin Terminal 1 early morning.',
@@ -341,8 +356,10 @@ export const defaultTripData: TripDay[] = [
         carryOn: '7kg (1 piece, max 50x37x25cm) + 1 personal item',
       },
     ],
-    itinerary: '',
+    itinerary:
+      '',
   },
+
 ]
 
 export const DESTINATION_ORDER = [
@@ -420,6 +437,18 @@ export function getLocationTheme(location: string) {
       dot: 'bg-slate-400',
       ring: 'ring-slate-100',
     },
+    'Hamad International Airport, Doha': {
+      accent: 'from-purple-700 to-fuchsia-800',
+      badge: 'bg-purple-100 text-purple-900 border-purple-200',
+      dot: 'bg-purple-700',
+      ring: 'ring-purple-100',
+    },
+    Doha: {
+      accent: 'from-purple-700 to-fuchsia-800',
+      badge: 'bg-purple-100 text-purple-900 border-purple-200',
+      dot: 'bg-purple-700',
+      ring: 'ring-purple-100',
+    },
     Departure: {
       accent: 'from-slate-500 to-slate-600',
       badge: 'bg-slate-100 text-slate-700 border-slate-200',
@@ -451,28 +480,76 @@ export function parseCostValue(cost: string): number {
   return match ? parseFloat(match[0]) : 0
 }
 
+const DESTINATION_CITY_LABELS: Record<string, string> = {
+  'Ha Long': 'Halong Bay',
+}
+
+function destinationKey(location: string): string | null {
+  const loc = location.split('→')[0].trim()
+  if (!loc || ['Transit', 'Departure', 'Dublin'].includes(loc)) return null
+
+  const meta = getLocationMeta(loc)
+  if (meta.country && meta.city !== 'In transit') {
+    return `${meta.city}|${meta.country}`
+  }
+  return loc
+}
+
+function destinationLabel(location: string): string {
+  const loc = location.split('→')[0].trim()
+  const meta = getLocationMeta(loc)
+  if (meta.city && DESTINATION_CITY_LABELS[meta.city]) {
+    return DESTINATION_CITY_LABELS[meta.city]
+  }
+  return loc
+}
+
+/** True when the flights field describes air travel, not hotel/transfer line items. */
+function isFlightActivity(flights: string): boolean {
+  const text = flights.trim()
+  if (!text) return false
+  if (/^(Hotel Night|Cruise Night)/i.test(text)) return false
+  if (/^(Grab to|Check out|Private (transfer|car)|Transfer from)/i.test(text)) return false
+  if (/^(Arrive|Local Grab)/i.test(text)) return true
+  return /Airways|Airlines|→|\b[A-Z]{2}\d{2,}\b|\b(DUB|DOH|SIN|BKK|DAD|HAN|USM)\b/.test(text)
+}
+
+export function countUniqueDates(data: TripDay[]): number {
+  return new Set(data.map((day) => day.date).filter(Boolean)).size
+}
+
+export function getTripDateRange(data: TripDay[]): { start: string; end: string } | null {
+  const dates = data.map((day) => day.date).filter(Boolean)
+  if (dates.length === 0) return null
+  return { start: dates[0], end: dates[dates.length - 1] }
+}
+
 export function getUniqueDestinations(data: TripDay[]): string[] {
   const seen = new Set<string>()
   const result: string[] = []
   for (const day of data) {
     const loc = day.location.split('→')[0].trim()
-    if (loc && !['Transit', 'Departure', 'Dublin'].includes(loc) && !seen.has(loc)) {
-      seen.add(loc)
-      result.push(loc)
-    }
+    if (!loc) continue
+    const key = destinationKey(loc)
+    if (!key || seen.has(key)) continue
+    seen.add(key)
+    result.push(destinationLabel(loc))
   }
   return result
 }
 
 export function getTripStats(data: TripDay[]) {
   const totalCost = data.reduce((sum, d) => sum + parseCostValue(d.cost), 0)
-  const flightDays = data.filter((d) => d.flights).length
+  const flightDates = new Set(
+    data.filter((day) => isFlightActivity(day.flights || '')).map((day) => day.date),
+  )
   const destinations = getUniqueDestinations(data)
 
   return {
-    totalDays: data.length,
+    totalDays: countUniqueDates(data),
     destinations: destinations.length,
-    flightDays,
+    flightDays: flightDates.size,
     totalCost,
+    itineraryItems: data.length,
   }
 }

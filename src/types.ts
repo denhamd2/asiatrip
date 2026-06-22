@@ -12,5 +12,7 @@ export interface TripDay {
   cost: string
   notes: string
   itinerary: string
+  /** Direct Gmail thread URL for this row's booking confirmation */
+  gmailUrl?: string
   baggage?: BaggageAllowance[]
 }

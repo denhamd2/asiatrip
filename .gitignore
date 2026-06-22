@@ -10,7 +10,12 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.tools
 *.local
+
+# Accidental local paths (never commit)
+Users/
+**/.telegram-agent/
 
 # Editor directories and files
 .vscode/*
